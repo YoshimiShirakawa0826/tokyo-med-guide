@@ -1,5 +1,25 @@
 export type Language = 'ja' | 'en' | 'zh' | 'ko';
 
+export type ClinicVerification = {
+  status: "verified" | "in_progress" | "unverified";
+  lastConfirmedAt?: string;
+  confirmedBy?: "phone" | "ai_interview" | "official_website" | "open_data" | "manual_visit";
+  confidenceScore?: number;
+  notes?: string;
+};
+
+export type ClinicAccessInfo = {
+  englishSupportToday?: boolean;
+  supportedLanguages?: string[];
+  creditCardAccepted?: boolean;
+  cashlessAccepted?: boolean;
+  overseasInsuranceAccepted?: boolean;
+  walkInAvailable?: boolean;
+  nightOpen?: boolean;
+  weekendOpen?: boolean;
+  emergencyAvailable?: boolean;
+};
+
 export interface Hospital {
   id: string;
   name: Record<Language, string>;
@@ -15,6 +35,10 @@ export interface Hospital {
   emergencyAccepted: boolean;
   updatedAt: string;
   dataSource: string;
+  
+  // New verification and access status
+  verification: ClinicVerification;
+  accessInfo: ClinicAccessInfo;
 }
 
 export const departments = [

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { initialHospitals } from '@/data/mockHospitals';
 import { Hospital } from '@/types';
-import { Edit, Save, Plus, Database } from 'lucide-react';
+import { Edit, Save, Plus, Database, CheckCircle, Globe, Shield, CreditCard } from 'lucide-react';
 
 export default function AdminDashboard() {
   const [hospitals, setHospitals] = useState<Hospital[]>([]);
@@ -32,6 +32,35 @@ export default function AdminDashboard() {
     saveToStorage(updated);
   };
 
+  const handleToggleEnglishToday = (id: string) => {
+    const updated = hospitals.map(h => 
+      h.id === id ? { 
+        ...h, 
+        accessInfo: { ...h.accessInfo, englishSupportToday: !h.accessInfo.englishSupportToday },
+        updatedAt: new Date().toISOString().split('T')[0] 
+      } : h
+    );
+    saveToStorage(updated);
+  };
+
+  const handleToggleVerification = (id: string) => {
+    const updated = hospitals.map(h => 
+      h.id === id ? { 
+        ...h, 
+        verification: { 
+          ...h.verification, 
+          status: (h.verification.status === 'verified' 
+            ? 'in_progress' 
+            : h.verification.status === 'in_progress' 
+              ? 'unverified' 
+              : 'verified') as "verified" | "in_progress" | "unverified"
+        },
+        updatedAt: new Date().toISOString().split('T')[0] 
+      } : h
+    );
+    saveToStorage(updated);
+  };
+
   if (!isClient) return null;
 
   return (
@@ -45,7 +74,7 @@ export default function AdminDashboard() {
         </h1>
         <div>
           <button 
-            className="flex items-center gap-2 bg-brand-600 hover:bg-brand-700 text-white font-bold px-4 py-2.5 rounded-2xl transition-all shadow-md shadow-indigo-100 hover:scale-[1.02] active:scale-[0.98]"
+            className="flex items-center gap-2 bg-brand-600 hover:bg-brand-700 text-white font-bold px-4 py-2.5 rounded-2xl transition-all shadow-md shadow-indigo-100 hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
             onClick={() => alert('Future feature: Add new hospital to Supabase')}
           >
             <Plus className="w-5 h-5" /> Add Hospital
@@ -60,6 +89,8 @@ export default function AdminDashboard() {
               <tr>
                 <th scope="col" className="px-6 py-4 text-left">Hospital Name (EN)</th>
                 <th scope="col" className="px-6 py-4 text-left">Status</th>
+                <th scope="col" className="px-6 py-4 text-left">English Support Today</th>
+                <th scope="col" className="px-6 py-4 text-left">Verification</th>
                 <th scope="col" className="px-6 py-4 text-left">Emergency</th>
                 <th scope="col" className="px-6 py-4 text-left">Last Updated</th>
                 <th scope="col" className="px-6 py-4 text-right">Actions</th>
@@ -72,6 +103,8 @@ export default function AdminDashboard() {
                     <div className="font-bold text-slate-900">{hospital.name.en}</div>
                     <div className="text-xs text-slate-400 font-semibold mt-0.5">{hospital.id}</div>
                   </td>
+                  
+                  {/* Status Toggle */}
                   <td className="px-6 py-4 whitespace-nowrap">
                     <button 
                       onClick={() => handleToggleOpen(hospital.id)}
@@ -84,6 +117,44 @@ export default function AdminDashboard() {
                       {hospital.isOpenNow ? 'Open Now' : 'Closed'}
                     </button>
                   </td>
+
+                  {/* English Today Toggle */}
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <button 
+                      onClick={() => handleToggleEnglishToday(hospital.id)}
+                      className={`px-3 py-1.5 inline-flex text-xs leading-5 font-bold rounded-xl cursor-pointer transition-all border ${
+                        hospital.accessInfo.englishSupportToday 
+                          ? 'bg-brand-50 border-brand-200 text-brand-700 hover:bg-brand-100' 
+                          : 'bg-slate-50 border-slate-200 text-slate-400 hover:bg-slate-100'
+                      }`}
+                    >
+                      <Globe className="w-3 h-3 mr-1 mt-0.5" />
+                      {hospital.accessInfo.englishSupportToday ? 'Available' : 'Unavailable'}
+                    </button>
+                  </td>
+
+                  {/* Verification Toggle */}
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <button 
+                      onClick={() => handleToggleVerification(hospital.id)}
+                      className={`px-3 py-1.5 inline-flex text-xs leading-5 font-bold rounded-xl cursor-pointer transition-all border ${
+                        hospital.verification.status === 'verified' 
+                          ? 'bg-emerald-50 border-emerald-200 text-emerald-700 hover:bg-emerald-100' 
+                          : hospital.verification.status === 'in_progress'
+                            ? 'bg-amber-50 border-amber-200 text-amber-700 hover:bg-amber-100'
+                            : 'bg-slate-50 border-slate-200 text-slate-400 hover:bg-slate-100'
+                      }`}
+                    >
+                      <CheckCircle className="w-3 h-3 mr-1 mt-0.5" />
+                      {hospital.verification.status === 'verified' 
+                        ? 'Verified' 
+                        : hospital.verification.status === 'in_progress' 
+                          ? 'Verifying' 
+                          : 'Unverified'}
+                    </button>
+                  </td>
+                  
+                  {/* Emergency */}
                   <td className="px-6 py-4 whitespace-nowrap">
                     {hospital.emergencyAccepted ? (
                       <span className="text-emergency-600 font-bold text-xs bg-emergency-50 border border-emergency-200 px-2 py-0.5 rounded-md">Yes</span>
@@ -91,11 +162,14 @@ export default function AdminDashboard() {
                       <span className="text-slate-400 text-xs bg-slate-50 border border-slate-200 px-2 py-0.5 rounded-md">No</span>
                     )}
                   </td>
+                  
+                  {/* Last Updated */}
                   <td className="px-6 py-4 whitespace-nowrap text-xs text-slate-500">
                     {hospital.updatedAt}
                   </td>
+                  
                   <td className="px-6 py-4 whitespace-nowrap text-right">
-                    <button className="text-brand-600 hover:text-brand-700 font-bold text-sm inline-flex items-center gap-1">
+                    <button className="text-brand-600 hover:text-brand-700 font-bold text-sm inline-flex items-center gap-1 cursor-pointer">
                       <Edit className="w-4 h-4" /> Edit
                     </button>
                   </td>
