@@ -132,7 +132,7 @@ const translations = {
     'search.title': '의료기관 찾기',
     'search.department': '진료과 검색',
     'search.language': '언어 검색',
-    
+
     // Filters
     'filter.openNow': '현재 진료중',
     'filter.holiday': '휴일 진료',
@@ -159,12 +159,51 @@ const translations = {
     'emergency.location': '현재 위치 표시',
     'emergency.phrases': '응급 시 유용한 일본어 표현',
     'emergency.sayThis': '차분하게 상담원에게 전달하십시오:',
-    
+
     'btn.search': '검색',
     'footer.disclaimer': '* 이 앱은 의료 진단을 제공하지 않습니다. 참고용으로만 사용해 주십시오. 방문 전 반드시 직접 확인하시기 바랍니다.',
     'nav.home': '홈',
     'nav.hospitals': '병원 목록',
     'nav.emergency': '응급 가이드',
+  },
+  es: {
+    'app.name': 'MediNavi JAPAN',
+    'search.title': 'Buscar Centros Médicos',
+    'search.department': 'Buscar por Especialidad',
+    'search.language': 'Buscar por Idioma',
+
+    // Filters
+    'filter.openNow': 'Abierto Ahora',
+    'filter.holiday': 'Servicio en Festivos',
+    'filter.walkIn': 'Sin Cita Previa',
+    'filter.englishToday': 'Inglés Disponible Hoy',
+    'filter.creditCard': 'Tarjeta / Sin Efectivo',
+    'filter.insurance': 'Seguro Internacional',
+    'filter.nightWeekend': 'Nocturno / Fin de Semana',
+    'filter.verified': 'Solo Datos Verificados',
+
+    // Trust & Shinjuku Pilot
+    'trust.pilotArea': 'Área Piloto: Shinjuku, Tokio',
+    'trust.banner': 'No solo datos abiertos. MediNavi JAPAN verifica el acceso real a clínicas mediante llamadas directas, entrevistas con IA y alianzas médicas locales.',
+    'trust.stats': 'Clínicas verificadas en Shinjuku: 32 / 100',
+    'trust.badge': 'Datos Verificados',
+    'trust.lastConfirmed': 'Última Verificación',
+    'trust.method': 'Verificado Por',
+
+    // Emergency UI
+    'emergency.title': '¿Emergencia? Llame al 119',
+    'emergency.desc': 'Si tiene síntomas que ponen en peligro su vida y necesita una ambulancia inmediatamente, llame al 119. Puede haber asistencia multilingüe.',
+    'emergency.consultation': 'Llame al #7119 para Consulta de Emergencia',
+    'emergency.consultationDesc': 'Si no está seguro de si llamar a una ambulancia, llame al #7119 para recibir asesoramiento médico profesional.',
+    'emergency.location': 'Mostrar Mi Ubicación Actual',
+    'emergency.phrases': 'Frases de emergencia en japonés',
+    'emergency.sayThis': 'Mantenga la calma. Diga al operador:',
+
+    'btn.search': 'Buscar',
+    'footer.disclaimer': '* Esta aplicación no proporciona diagnósticos médicos. Úsela solo como referencia. Siempre confirme directamente antes de visitar.',
+    'nav.home': 'Inicio',
+    'nav.hospitals': 'Hospitales',
+    'nav.emergency': 'Guía de Emergencia',
   }
 };
 

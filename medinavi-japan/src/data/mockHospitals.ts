@@ -7,13 +7,15 @@ export const initialHospitals: Hospital[] = [
       ja: '新宿インターナショナルクリニック',
       en: 'Shinjuku International Clinic',
       zh: '新宿国际诊所',
-      ko: '신주쿠 인터내셔널 클리닉'
+      ko: '신주쿠 인터내셔널 클리닉',
+      es: 'Clínica Internacional de Shinjuku'
     },
     address: {
       ja: '東京都新宿区西新宿1-12-1',
       en: '1-12-1 Nishi-Shinjuku, Shinjuku-ku, Tokyo',
       zh: '东京都新宿区西新宿1-12-1',
-      ko: '도쿄도 신주쿠구 니시신주쿠 1-12-1'
+      ko: '도쿄도 신주쿠구 니시신주쿠 1-12-1',
+      es: '1-12-1 Nishi-Shinjuku, Shinjuku, Tokio'
     },
     phone: '03-1111-2222',
     latitude: 35.6898,
@@ -24,14 +26,14 @@ export const initialHospitals: Hospital[] = [
     hasHolidayService: true,
     walkInAllowed: true,
     emergencyAccepted: false,
-    updatedAt: '2026-06-13',
+    updatedAt: '2026-06-15',
     dataSource: 'Direct Phone Call (Verified)',
     verification: {
       status: 'verified',
-      lastConfirmedAt: '2026-06-13',
+      lastConfirmedAt: '2026-06-15',
       confirmedBy: 'phone',
       confidenceScore: 98,
-      notes: 'English staff present at reception and consulting room today.'
+      notes: 'English staff confirmed at reception and consulting room. Walk-in accepted today.'
     },
     accessInfo: {
       englishSupportToday: true,
@@ -51,13 +53,15 @@ export const initialHospitals: Hospital[] = [
       ja: '歌舞伎町救急メディカルセンター',
       en: 'Kabukicho Emergency Medical Center',
       zh: '歌舞伎町急救医疗中心',
-      ko: '가부키초 응급 메디컬 센터'
+      ko: '가부키초 응급 메디컬 센터',
+      es: 'Centro Médico de Emergencias de Kabukicho'
     },
     address: {
       ja: '東京都新宿区歌舞伎町2-8-3',
       en: '2-8-3 Kabukicho, Shinjuku-ku, Tokyo',
       zh: '东京都新宿区歌舞伎町2-8-3',
-      ko: '도쿄도 신주쿠구 가부키초 2-8-3'
+      ko: '도쿄도 신주쿠구 가부키초 2-8-3',
+      es: '2-8-3 Kabukicho, Shinjuku, Tokio'
     },
     phone: '03-2222-3333',
     latitude: 35.6961,
@@ -68,11 +72,11 @@ export const initialHospitals: Hospital[] = [
     hasHolidayService: true,
     walkInAllowed: false,
     emergencyAccepted: true,
-    updatedAt: '2026-06-12',
+    updatedAt: '2026-06-15',
     dataSource: 'AI Interview Verified',
     verification: {
       status: 'verified',
-      lastConfirmedAt: '2026-06-12',
+      lastConfirmedAt: '2026-06-15',
       confirmedBy: 'ai_interview',
       confidenceScore: 95,
       notes: 'Emergency unit open 24/7. Interpretation device & multilingual staff available.'
@@ -95,13 +99,15 @@ export const initialHospitals: Hospital[] = [
       ja: '大久保ファミリークリニック',
       en: 'Okubo Family Clinic',
       zh: '大久保家庭诊所',
-      ko: '오쿠보 패밀리 클리닉'
+      ko: '오쿠보 패밀리 클리닉',
+      es: 'Clínica Familiar de Okubo'
     },
     address: {
       ja: '東京都新宿区大久保1-15-2',
       en: '1-15-2 Okubo, Shinjuku-ku, Tokyo',
       zh: '东京都新宿区大久保1-15-2',
-      ko: '도쿄도 신주쿠구 오쿠보 1-15-2'
+      ko: '도쿄도 신주쿠구 오쿠보 1-15-2',
+      es: '1-15-2 Okubo, Shinjuku, Tokio'
     },
     phone: '03-3333-4444',
     latitude: 35.7012,
@@ -112,11 +118,11 @@ export const initialHospitals: Hospital[] = [
     hasHolidayService: false,
     walkInAllowed: true,
     emergencyAccepted: false,
-    updatedAt: '2026-06-11',
+    updatedAt: '2026-06-14',
     dataSource: 'Manual Visit & Verification',
     verification: {
       status: 'verified',
-      lastConfirmedAt: '2026-06-11',
+      lastConfirmedAt: '2026-06-14',
       confirmedBy: 'manual_visit',
       confidenceScore: 97,
       notes: 'Chinese and Korean fluent doctors. English translation available via iPad.'
@@ -139,13 +145,15 @@ export const initialHospitals: Hospital[] = [
       ja: '西新宿ハートクリニック',
       en: 'Nishi-Shinjuku Heart Clinic',
       zh: '西新宿心脏诊所',
-      ko: '니시신주쿠 하트 클리닉'
+      ko: '니시신주쿠 하트 클리닉',
+      es: 'Clínica Cardíaca de Nishi-Shinjuku'
     },
     address: {
       ja: '東京都新宿区西新宿6-5-1',
       en: '6-5-1 Nishi-Shinjuku, Shinjuku-ku, Tokyo',
       zh: '东京都新宿区西新宿6-5-1',
-      ko: '도쿄도 신주쿠구 니시신주쿠 6-5-1'
+      ko: '도쿄도 신주쿠구 니시신주쿠 6-5-1',
+      es: '6-5-1 Nishi-Shinjuku, Shinjuku, Tokio'
     },
     phone: '03-4444-5555',
     latitude: 35.6934,
@@ -183,13 +191,15 @@ export const initialHospitals: Hospital[] = [
       ja: '高田馬場小児科・内科',
       en: 'Takadanobaba Pediatrics & Internal Medicine',
       zh: '高田马场儿科内科诊所',
-      ko: '다카다노바바 소아과・내과'
+      ko: '다카다노바바 소아과・내과',
+      es: 'Pediatría y Medicina Interna de Takadanobaba'
     },
     address: {
       ja: '東京都新宿区高田馬場2-14-5',
       en: '2-14-5 Takadanobaba, Shinjuku-ku, Tokyo',
       zh: '东京都新宿区高田马场2-14-5',
-      ko: '도쿄도 신주쿠구 다카다노바바 2-14-5'
+      ko: '도쿄도 신주쿠구 다카다노바바 2-14-5',
+      es: '2-14-5 Takadanobaba, Shinjuku, Tokio'
     },
     phone: '03-5555-6666',
     latitude: 35.7128,
