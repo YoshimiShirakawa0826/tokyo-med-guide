@@ -18,13 +18,25 @@ function HospitalsContent() {
     fetch('/data/clinics.json')
       .then(r => r.json())
       .then((data: Hospital[]) => {
-        // isOpenNow を今日の曜日で動的に再計算
+        const now = new Date();
         const dayKeys = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
-        const todayKey = dayKeys[new Date().getDay()];
-        const updated = data.map(h => ({
-          ...h,
-          isOpenNow: h.closedDays ? !h.closedDays[todayKey] : false,
-        }));
+        const todayKey = dayKeys[now.getDay()];
+        const nowMinutes = now.getHours() * 60 + now.getMinutes();
+
+        const updated = data.map(h => {
+          // 休診曜日チェック
+          if (h.closedDays?.[todayKey]) return { ...h, isOpenNow: false };
+          // 診療時間チェック（データある場合）
+          const todayHours = h.openingHours?.[todayKey];
+          if (todayHours) {
+            const [sh, sm] = todayHours.start.split(':').map(Number);
+            const [eh, em] = todayHours.end.split(':').map(Number);
+            const isOpen = nowMinutes >= sh * 60 + sm && nowMinutes <= eh * 60 + em;
+            return { ...h, isOpenNow: isOpen };
+          }
+          // 休診でなく時間データもない場合は開院とみなす
+          return { ...h, isOpenNow: true };
+        });
         setHospitals(updated);
         setLoading(false);
       })

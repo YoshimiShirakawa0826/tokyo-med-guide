@@ -17,10 +17,23 @@ export default function HospitalDetail() {
       .then(r => r.json())
       .then((data: Hospital[]) => {
         const found = data.find(h => h.id === params.id);
-        if (found && found.closedDays) {
+        if (found) {
+          const now = new Date();
           const dayKeys = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
-          const todayKey = dayKeys[new Date().getDay()];
-          found.isOpenNow = !found.closedDays[todayKey];
+          const todayKey = dayKeys[now.getDay()];
+          const nowMinutes = now.getHours() * 60 + now.getMinutes();
+          if (found.closedDays?.[todayKey]) {
+            found.isOpenNow = false;
+          } else {
+            const todayHours = found.openingHours?.[todayKey];
+            if (todayHours) {
+              const [sh, sm] = todayHours.start.split(':').map(Number);
+              const [eh, em] = todayHours.end.split(':').map(Number);
+              found.isOpenNow = nowMinutes >= sh * 60 + sm && nowMinutes <= eh * 60 + em;
+            } else {
+              found.isOpenNow = true;
+            }
+          }
         }
         setHospital(found ?? null);
       })
@@ -166,26 +179,47 @@ export default function HospitalDetail() {
                   <p className="text-slate-800 font-semibold text-sm">{getDeptNames(hospital.departments)}</p>
                 </div>
 
-                <div className="pt-3 border-t border-slate-200/60 flex items-center justify-between">
-                  <div>
-                    <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Today&apos;s Status</p>
-                    <div className="flex items-center gap-2">
-                      <Clock className="w-4 h-4 text-slate-400" />
-                      {hospital.isOpenNow ? (
-                        <span className="text-accent-700 font-bold text-xs bg-accent-50 px-2.5 py-0.5 rounded border border-accent-100">Open Today</span>
+                <div className="pt-3 border-t border-slate-200/60 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Today&apos;s Status</p>
+                      <div className="flex items-center gap-2">
+                        <Clock className="w-4 h-4 text-slate-400" />
+                        {hospital.isOpenNow ? (
+                          <span className="text-accent-700 font-bold text-xs bg-accent-50 px-2.5 py-0.5 rounded border border-accent-100">Open Now</span>
+                        ) : (
+                          <span className="text-slate-500 font-semibold text-xs bg-slate-100 px-2.5 py-0.5 rounded border border-slate-200">Closed Now</span>
+                        )}
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Weekend</p>
+                      {hospital.accessInfo.weekendOpen ? (
+                        <span className="text-slate-700 font-bold text-xs bg-white px-2.5 py-0.5 rounded border border-slate-200">Open on Weekends</span>
                       ) : (
-                        <span className="text-slate-500 font-semibold text-xs bg-slate-100 px-2.5 py-0.5 rounded border border-slate-200">Closed Today</span>
+                        <span className="text-slate-400 font-semibold text-xs bg-slate-100 px-2.5 py-0.5 rounded border border-slate-200">Weekdays Only</span>
                       )}
                     </div>
                   </div>
-                  <div>
-                    <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Weekend</p>
-                    {hospital.accessInfo.weekendOpen ? (
-                      <span className="text-slate-700 font-bold text-xs bg-white px-2.5 py-0.5 rounded border border-slate-200">Open on Weekends</span>
-                    ) : (
-                      <span className="text-slate-400 font-semibold text-xs bg-slate-100 px-2.5 py-0.5 rounded border border-slate-200">Weekdays Only</span>
-                    )}
-                  </div>
+                  {/* 診療時間表 */}
+                  {hospital.openingHours && (
+                    <div className="pt-2">
+                      <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Opening Hours</p>
+                      <div className="grid grid-cols-4 gap-1 text-[10px]">
+                        {(['mon','tue','wed','thu','fri','sat','sun'] as const).map((day, i) => {
+                          const labels = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+                          const h = hospital.openingHours?.[day];
+                          const closed = hospital.closedDays?.[day];
+                          return (
+                            <div key={day} className={`text-center p-1 rounded ${closed ? 'bg-slate-100 text-slate-300' : 'bg-white border border-slate-200'}`}>
+                              <p className="font-bold text-slate-500">{labels[i]}</p>
+                              {closed ? <p>—</p> : h ? <p className="text-slate-700">{h.start}–{h.end}</p> : <p className="text-slate-500">Open</p>}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </section>
