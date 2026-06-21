@@ -43,7 +43,7 @@ function HospitalsContent() {
   const verifiedFilter = searchParams.get('verified') === 'true';
 
   const filteredHospitals = hospitals.filter(h => {
-    if (deptFilter && !h.departments.includes(deptFilter)) return false;
+    if (deptFilter && h.departments.length > 0 && !h.departments.includes(deptFilter)) return false;
     if (langFilter && !h.supportedLanguages.includes(langFilter as Language)) return false;  // eslint-disable-line @typescript-eslint/no-explicit-any
     if (openNowFilter && !h.isOpenNow) return false;
     if (engTodayFilter && !h.accessInfo.englishSupportToday) return false;
