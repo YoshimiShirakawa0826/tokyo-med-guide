@@ -1,25 +1,35 @@
 "use client";
 
 import { useLanguage } from '@/components/LanguageProvider';
-import { initialHospitals } from '@/data/mockHospitals';
-import { departments } from '@/types';
+import { Hospital, departments } from '@/types';
 import { MapPin, Phone, Clock, AlertTriangle, ArrowLeft, Info, ExternalLink, CheckCircle, CreditCard, Shield, Globe, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 export default function HospitalDetail() {
-  const { language, t } = useLanguage();
+  const { language } = useLanguage();
   const params = useParams();
-  const [isClient, setIsClient] = useState(false);
+  const [hospital, setHospital] = useState<Hospital | null | undefined>(undefined);
 
   useEffect(() => {
-    setIsClient(true);
-  }, []);
+    fetch('/data/clinics.json')
+      .then(r => r.json())
+      .then((data: Hospital[]) => {
+        const found = data.find(h => h.id === params.id);
+        if (found && found.closedDays) {
+          const dayKeys = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+          const todayKey = dayKeys[new Date().getDay()];
+          found.isOpenNow = !found.closedDays[todayKey];
+        }
+        setHospital(found ?? null);
+      })
+      .catch(() => setHospital(null));
+  }, [params.id]);
 
-  if (!isClient) return null;
-
-  const hospital = initialHospitals.find(h => h.id === params.id);
+  if (hospital === undefined) {
+    return <div className="max-w-3xl mx-auto px-4 py-16 text-center text-slate-500 font-semibold">Loading...</div>;
+  }
 
   if (!hospital) {
     return (
@@ -33,10 +43,12 @@ export default function HospitalDetail() {
   }
 
   const getDeptNames = (deptIds: string[]) => {
-    return deptIds.map(id => {
-      const d = departments.find(d => d.id === id);
-      return d ? (d.name[language as keyof typeof d.name] || d.name.en) : id;
-    }).join(', ');
+    return deptIds.length > 0
+      ? deptIds.map(id => {
+          const d = departments.find(d => d.id === id);
+          return d ? (d.name[language as keyof typeof d.name] || d.name.en) : id;
+        }).join(', ')
+      : '—';
   };
 
   const getVerificationMethodLabel = (method?: string) => {
@@ -45,7 +57,7 @@ export default function HospitalDetail() {
       case 'ai_interview': return 'AI Phone Interview Verification';
       case 'manual_visit': return 'Manual Site Visit & Verification';
       case 'official_website': return 'Official Website Scrape';
-      default: return 'Open Data Directory';
+      default: return 'Open Data Directory (厚生労働省)';
     }
   };
 
@@ -58,7 +70,7 @@ export default function HospitalDetail() {
       </Link>
 
       <div className="bg-white rounded-3xl shadow-xl shadow-slate-100 border border-slate-200/60 overflow-hidden">
-        
+
         {/* Banner header */}
         <div className={`px-6 py-8 sm:px-8 border-b ${hospital.verification.status === 'verified' ? 'bg-gradient-to-r from-brand-50/20 to-indigo-50/10 border-brand-100/50' : 'bg-gradient-to-r from-slate-50 to-slate-100/30 border-slate-200/60'}`}>
           <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
@@ -70,20 +82,22 @@ export default function HospitalDetail() {
                   </span>
                 ) : (
                   <span className="inline-flex items-center gap-1 bg-slate-50 text-slate-500 text-xs px-2.5 py-1 rounded-full font-semibold border border-slate-200">
-                    Verification In Progress
+                    Open Data Source
                   </span>
                 )}
-                <span className="text-[10px] font-bold text-slate-400">Score: {hospital.verification.confidenceScore}%</span>
               </div>
-              
+
               <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900">
-                {hospital.name[language] || hospital.name.en}
+                {hospital.name[language] || hospital.name.en || hospital.name.ja}
               </h1>
+              {hospital.name.en && hospital.name.en !== hospital.name.ja && (
+                <p className="text-sm text-slate-500 mt-1">{hospital.name.ja}</p>
+              )}
             </div>
-            
+
             {hospital.emergencyAccepted && (
               <span className="inline-flex items-center gap-1.5 bg-emergency-100/80 text-emergency-800 px-4 py-2 rounded-2xl font-extrabold text-sm border border-emergency-200">
-                <AlertTriangle className="w-4.5 h-4.5 text-emergency-600 animate-pulse" /> Emergency Accepted
+                <AlertTriangle className="w-4 h-4 text-emergency-600 animate-pulse" /> Emergency Accepted
               </span>
             )}
           </div>
@@ -91,18 +105,18 @@ export default function HospitalDetail() {
 
         {/* Content details */}
         <div className="p-6 sm:p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
-          
-          {/* Left Column: Access Info & Location */}
+
+          {/* Left Column */}
           <div className="space-y-6">
             <section className="space-y-4">
               <h2 className="text-sm font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 pb-2">Location & Contacts</h2>
-              
+
               <div className="space-y-4">
                 <div className="flex items-start">
                   <MapPin className="w-5 h-5 text-slate-400 mt-0.5 mr-3 flex-shrink-0" />
                   <div>
-                    <p className="text-slate-700 font-semibold text-sm leading-relaxed">{hospital.address[language] || hospital.address.en}</p>
-                    <a 
+                    <p className="text-slate-700 font-semibold text-sm leading-relaxed">{hospital.address[language] || hospital.address.ja}</p>
+                    <a
                       href={mapUrl}
                       target="_blank"
                       rel="noopener noreferrer"
@@ -113,18 +127,33 @@ export default function HospitalDetail() {
                   </div>
                 </div>
 
-                <div className="flex items-start pt-3 border-t border-slate-50">
-                  <Phone className="w-5 h-5 text-slate-400 mt-1.5 mr-3 flex-shrink-0" />
-                  <div className="flex-grow flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                    <p className="text-slate-800 font-bold text-base">{hospital.phone}</p>
-                    <a 
-                      href={`tel:${hospital.phone.replace(/-/g, '')}`}
-                      className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-xs font-bold rounded-xl shadow-xs text-white bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-700 hover:to-indigo-700 transition-colors"
+                {hospital.phone ? (
+                  <div className="flex items-start pt-3 border-t border-slate-50">
+                    <Phone className="w-5 h-5 text-slate-400 mt-1.5 mr-3 flex-shrink-0" />
+                    <div className="flex-grow flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                      <p className="text-slate-800 font-bold text-base">{hospital.phone}</p>
+                      <a
+                        href={`tel:${hospital.phone.replace(/-/g, '')}`}
+                        className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-xs font-bold rounded-xl shadow-xs text-white bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-700 hover:to-indigo-700 transition-colors"
+                      >
+                        Call Now
+                      </a>
+                    </div>
+                  </div>
+                ) : null}
+
+                {hospital.website && (
+                  <div className="pt-3 border-t border-slate-50">
+                    <a
+                      href={hospital.website}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 text-sm font-bold text-brand-600 hover:text-brand-700 transition-colors"
                     >
-                      Call Now
+                      <Globe className="w-4 h-4" /> Official Website <ExternalLink className="w-3.5 h-3.5" />
                     </a>
                   </div>
-                </div>
+                )}
               </div>
             </section>
 
@@ -136,36 +165,48 @@ export default function HospitalDetail() {
                   <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Departments</p>
                   <p className="text-slate-800 font-semibold text-sm">{getDeptNames(hospital.departments)}</p>
                 </div>
-                
+
                 <div className="pt-3 border-t border-slate-200/60 flex items-center justify-between">
                   <div>
-                    <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Business Status</p>
+                    <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Today&apos;s Status</p>
                     <div className="flex items-center gap-2">
                       <Clock className="w-4 h-4 text-slate-400" />
                       {hospital.isOpenNow ? (
-                        <span className="text-accent-700 font-bold text-xs bg-accent-50 px-2.5 py-0.5 rounded border border-accent-100">Open Now</span>
+                        <span className="text-accent-700 font-bold text-xs bg-accent-50 px-2.5 py-0.5 rounded border border-accent-100">Open Today</span>
                       ) : (
-                        <span className="text-slate-500 font-semibold text-xs bg-slate-100 px-2.5 py-0.5 rounded border border-slate-200">Currently Closed</span>
+                        <span className="text-slate-500 font-semibold text-xs bg-slate-100 px-2.5 py-0.5 rounded border border-slate-200">Closed Today</span>
                       )}
                     </div>
                   </div>
                   <div>
-                    <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Walk-in Support</p>
-                    {hospital.accessInfo.walkInAvailable ? (
-                      <span className="text-slate-700 font-bold text-xs bg-white px-2.5 py-0.5 rounded border border-slate-200">No Booking Needed</span>
+                    <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Weekend</p>
+                    {hospital.accessInfo.weekendOpen ? (
+                      <span className="text-slate-700 font-bold text-xs bg-white px-2.5 py-0.5 rounded border border-slate-200">Open on Weekends</span>
                     ) : (
-                      <span className="text-slate-400 font-semibold text-xs bg-slate-100 px-2.5 py-0.5 rounded border border-slate-200">Booking Preferred</span>
+                      <span className="text-slate-400 font-semibold text-xs bg-slate-100 px-2.5 py-0.5 rounded border border-slate-200">Weekdays Only</span>
                     )}
                   </div>
                 </div>
               </div>
             </section>
+
+            {/* Supported Languages */}
+            <section className="space-y-3 pt-4 border-t border-slate-100">
+              <h2 className="text-sm font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 pb-2">Supported Languages</h2>
+              <div className="flex flex-wrap gap-2">
+                {hospital.supportedLanguages.map(lang => (
+                  <span key={lang} className="bg-brand-50 text-brand-700 text-xs px-3 py-1 rounded-lg font-bold border border-brand-100 uppercase">
+                    {lang === 'en' ? 'English' : lang === 'zh' ? '中文' : lang === 'ko' ? '한국어' : lang === 'es' ? 'Español' : '日本語'}
+                  </span>
+                ))}
+              </div>
+            </section>
           </div>
 
-          {/* Right Column: Verification Trust & Access Features */}
+          {/* Right Column */}
           <div className="space-y-6">
-            
-            {/* Trust & Verification Report Section */}
+
+            {/* Verification Report */}
             <section className="space-y-4">
               <h2 className="text-sm font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 pb-2">Verification Report</h2>
               <div className="bg-gradient-to-br from-slate-900 to-slate-800 text-white rounded-2xl p-5 space-y-3 shadow-md">
@@ -174,17 +215,13 @@ export default function HospitalDetail() {
                   <span className="text-xs font-bold text-slate-200">{getVerificationMethodLabel(hospital.verification.confirmedBy)}</span>
                 </div>
                 <div className="flex items-center justify-between border-b border-white/10 pb-2">
-                  <span className="text-xs font-bold text-brand-300">Last Verified</span>
-                  <span className="text-xs font-bold text-slate-200">{hospital.verification.lastConfirmedAt || 'N/A'}</span>
+                  <span className="text-xs font-bold text-brand-300">Data Updated</span>
+                  <span className="text-xs font-bold text-slate-200">{hospital.updatedAt}</span>
                 </div>
-                {hospital.verification.notes && (
-                  <div className="space-y-1">
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Staff Live Notes</span>
-                    <p className="text-xs text-slate-300 leading-relaxed font-semibold italic">
-                      "{hospital.verification.notes}"
-                    </p>
-                  </div>
-                )}
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-brand-300">Source</span>
+                  <span className="text-xs font-bold text-slate-200">{hospital.dataSource}</span>
+                </div>
               </div>
             </section>
 
@@ -192,39 +229,35 @@ export default function HospitalDetail() {
             <section className="space-y-4 pt-4 border-t border-slate-100">
               <h2 className="text-sm font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 pb-2">Access Capabilities</h2>
               <div className="grid grid-cols-2 gap-3">
-                {/* English support */}
                 <div className="p-3 bg-slate-50 border border-slate-200/60 rounded-xl flex items-center gap-2">
                   <Globe className={`w-4 h-4 ${hospital.accessInfo.englishSupportToday ? 'text-brand-500' : 'text-slate-300'}`} />
                   <div>
                     <p className="text-[10px] text-slate-400 font-bold">English Support</p>
-                    <p className="text-xs font-extrabold text-slate-700">{hospital.accessInfo.englishSupportToday ? 'Available Today' : 'Limited'}</p>
+                    <p className="text-xs font-extrabold text-slate-700">{hospital.accessInfo.englishSupportToday ? 'Available' : 'Limited'}</p>
                   </div>
                 </div>
 
-                {/* Credit Card */}
                 <div className="p-3 bg-slate-50 border border-slate-200/60 rounded-xl flex items-center gap-2">
                   <CreditCard className={`w-4 h-4 ${hospital.accessInfo.creditCardAccepted ? 'text-brand-500' : 'text-slate-300'}`} />
                   <div>
                     <p className="text-[10px] text-slate-400 font-bold">Credit Card</p>
-                    <p className="text-xs font-extrabold text-slate-700">{hospital.accessInfo.creditCardAccepted ? 'Accepted' : 'Cash Only'}</p>
+                    <p className="text-xs font-extrabold text-slate-700">{hospital.accessInfo.creditCardAccepted ? 'Accepted' : 'Unconfirmed'}</p>
                   </div>
                 </div>
 
-                {/* Cashless */}
-                <div className="p-3 bg-slate-50 border border-slate-200/60 rounded-xl flex items-center gap-2">
-                  <CreditCard className={`w-4 h-4 ${hospital.accessInfo.cashlessAccepted ? 'text-brand-500' : 'text-slate-300'}`} />
-                  <div>
-                    <p className="text-[10px] text-slate-400 font-bold">Cashless Pay</p>
-                    <p className="text-xs font-extrabold text-slate-700">{hospital.accessInfo.cashlessAccepted ? 'QR / IC OK' : 'Unavailable'}</p>
-                  </div>
-                </div>
-
-                {/* Overseas Insurance */}
                 <div className="p-3 bg-slate-50 border border-slate-200/60 rounded-xl flex items-center gap-2">
                   <Shield className={`w-4 h-4 ${hospital.accessInfo.overseasInsuranceAccepted ? 'text-brand-500' : 'text-slate-300'}`} />
                   <div>
                     <p className="text-[10px] text-slate-400 font-bold">Travel Insurance</p>
-                    <p className="text-xs font-extrabold text-slate-700">{hospital.accessInfo.overseasInsuranceAccepted ? 'Docs Prepared' : 'No Direct Claim'}</p>
+                    <p className="text-xs font-extrabold text-slate-700">{hospital.accessInfo.overseasInsuranceAccepted ? 'Docs Prepared' : 'Unconfirmed'}</p>
+                  </div>
+                </div>
+
+                <div className="p-3 bg-slate-50 border border-slate-200/60 rounded-xl flex items-center gap-2">
+                  <Sparkles className={`w-4 h-4 ${hospital.hasHolidayService ? 'text-brand-500' : 'text-slate-300'}`} />
+                  <div>
+                    <p className="text-[10px] text-slate-400 font-bold">Holiday Service</p>
+                    <p className="text-xs font-extrabold text-slate-700">{hospital.hasHolidayService ? 'Available' : 'Closed'}</p>
                   </div>
                 </div>
               </div>
@@ -236,13 +269,13 @@ export default function HospitalDetail() {
                 <Info className="w-4 h-4 text-brand-600" /> Important Checklist
               </h3>
               <ul className="text-xs text-brand-900/80 leading-relaxed font-semibold list-disc pl-4 space-y-1">
-                <li>Bring your **Passport** or Residence Card (if resident).</li>
-                <li>Bring your **Travel Insurance Certificate** for smooth claims.</li>
+                <li>Bring your Passport or Residence Card (if resident).</li>
+                <li>Bring your Travel Insurance Certificate for smooth claims.</li>
                 <li>Write down your current symptoms and medical history in advance.</li>
               </ul>
             </div>
           </div>
-          
+
         </div>
       </div>
     </div>

@@ -35,7 +35,9 @@ export interface Hospital {
   emergencyAccepted: boolean;
   updatedAt: string;
   dataSource: string;
-  
+  website?: string;
+  closedDays?: Record<string, boolean>;
+
   // New verification and access status
   verification: ClinicVerification;
   accessInfo: ClinicAccessInfo;
