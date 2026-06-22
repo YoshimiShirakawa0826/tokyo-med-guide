@@ -26,12 +26,14 @@ function HospitalsContent() {
         const updated = data.map(h => {
           // 休診曜日チェック
           if (h.closedDays?.[todayKey]) return { ...h, isOpenNow: false };
-          // 診療時間チェック（データある場合）
-          const todayHours = h.openingHours?.[todayKey];
-          if (todayHours) {
-            const [sh, sm] = todayHours.start.split(':').map(Number);
-            const [eh, em] = todayHours.end.split(':').map(Number);
-            const isOpen = nowMinutes >= sh * 60 + sm && nowMinutes <= eh * 60 + em;
+          // 診療時間チェック（複数コマ対応）
+          const todaySlots = h.openingHours?.[todayKey];
+          if (todaySlots && todaySlots.length > 0) {
+            const isOpen = todaySlots.some(slot => {
+              const [sh, sm] = slot.start.split(':').map(Number);
+              const [eh, em] = slot.end.split(':').map(Number);
+              return nowMinutes >= sh * 60 + sm && nowMinutes <= eh * 60 + em;
+            });
             return { ...h, isOpenNow: isOpen };
           }
           // 休診でなく時間データもない場合は開院とみなす

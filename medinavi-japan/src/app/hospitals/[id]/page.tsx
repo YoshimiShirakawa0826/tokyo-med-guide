@@ -25,11 +25,13 @@ export default function HospitalDetail() {
           if (found.closedDays?.[todayKey]) {
             found.isOpenNow = false;
           } else {
-            const todayHours = found.openingHours?.[todayKey];
-            if (todayHours) {
-              const [sh, sm] = todayHours.start.split(':').map(Number);
-              const [eh, em] = todayHours.end.split(':').map(Number);
-              found.isOpenNow = nowMinutes >= sh * 60 + sm && nowMinutes <= eh * 60 + em;
+            const todaySlots = found.openingHours?.[todayKey];
+            if (todaySlots && todaySlots.length > 0) {
+              found.isOpenNow = todaySlots.some(slot => {
+                const [sh, sm] = slot.start.split(':').map(Number);
+                const [eh, em] = slot.end.split(':').map(Number);
+                return nowMinutes >= sh * 60 + sm && nowMinutes <= eh * 60 + em;
+              });
             } else {
               found.isOpenNow = true;
             }
@@ -208,12 +210,22 @@ export default function HospitalDetail() {
                       <div className="grid grid-cols-4 gap-1 text-[10px]">
                         {(['mon','tue','wed','thu','fri','sat','sun'] as const).map((day, i) => {
                           const labels = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
-                          const h = hospital.openingHours?.[day];
+                          const slots = hospital.openingHours?.[day];
                           const closed = hospital.closedDays?.[day];
                           return (
                             <div key={day} className={`text-center p-1 rounded ${closed ? 'bg-slate-100 text-slate-300' : 'bg-white border border-slate-200'}`}>
                               <p className="font-bold text-slate-500">{labels[i]}</p>
-                              {closed ? <p>—</p> : h ? <p className="text-slate-700">{h.start}–{h.end}</p> : <p className="text-slate-500">Open</p>}
+                              {closed ? (
+                                <p>—</p>
+                              ) : slots && slots.length > 0 ? (
+                                <div className="space-y-0.5">
+                                  {slots.map((slot, si) => (
+                                    <p key={si} className="text-slate-700">{slot.start}–{slot.end}</p>
+                                  ))}
+                                </div>
+                              ) : (
+                                <p className="text-slate-500">Open</p>
+                              )}
                             </div>
                           );
                         })}

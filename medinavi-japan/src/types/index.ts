@@ -37,7 +37,7 @@ export interface Hospital {
   dataSource: string;
   website?: string;
   closedDays?: Record<string, boolean>;
-  openingHours?: Record<string, { start: string; end: string } | null>;
+  openingHours?: Record<string, Array<{ start: string; end: string }> | null>;
 
   // New verification and access status
   verification: ClinicVerification;
