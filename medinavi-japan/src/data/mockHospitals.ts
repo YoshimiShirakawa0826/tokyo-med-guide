@@ -44,7 +44,13 @@ export const initialHospitals: Hospital[] = [
       walkInAvailable: true,
       nightOpen: true,
       weekendOpen: true,
-      emergencyAvailable: false
+      emergencyAvailable: false,
+      // 自費診療サンプル（demo。本番は医療機関が確認・許可した情報のみ掲載する）
+      selfPayAvailable: true,
+      noInsuranceAccepted: true,
+      estimatedCostNote: '初診 ¥5,000〜（自費）/ First visit from ¥5,000 (self-pay)',
+      medicalCertificateJa: true,
+      medicalCertificateEn: true
     }
   },
   {
@@ -90,7 +96,12 @@ export const initialHospitals: Hospital[] = [
       walkInAvailable: false,
       nightOpen: true,
       weekendOpen: true,
-      emergencyAvailable: true
+      emergencyAvailable: true,
+      selfPayAvailable: true,
+      noInsuranceAccepted: true,
+      estimatedCostNote: '救急対応。費用は診療内容により変動 / Emergency care; cost varies by treatment',
+      medicalCertificateJa: true,
+      medicalCertificateEn: true
     }
   },
   {
@@ -136,7 +147,12 @@ export const initialHospitals: Hospital[] = [
       walkInAvailable: true,
       nightOpen: false,
       weekendOpen: true,
-      emergencyAvailable: false
+      emergencyAvailable: false,
+      selfPayAvailable: true,
+      noInsuranceAccepted: true,
+      medicalCertificateJa: true,
+      medicalCertificateEn: false
+      // estimatedCostNote 未設定 → UI では「要事前確認」を表示（欠損許容の確認用）
     }
   },
   {

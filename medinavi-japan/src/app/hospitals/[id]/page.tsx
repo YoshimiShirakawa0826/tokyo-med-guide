@@ -2,13 +2,13 @@
 
 import { useLanguage } from '@/components/LanguageProvider';
 import { Hospital, departments } from '@/types';
-import { MapPin, Phone, Clock, AlertTriangle, ArrowLeft, Info, ExternalLink, CheckCircle, CreditCard, Shield, Globe, Sparkles } from 'lucide-react';
+import { MapPin, Phone, Clock, AlertTriangle, ArrowLeft, Info, ExternalLink, CheckCircle, CreditCard, Shield, Globe, Sparkles, Wallet, Receipt, FileText } from 'lucide-react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 export default function HospitalDetail() {
-  const { language } = useLanguage();
+  const { language, t } = useLanguage();
   const params = useParams();
   const [hospital, setHospital] = useState<Hospital | null | undefined>(undefined);
 
@@ -308,6 +308,59 @@ export default function HospitalDetail() {
                 </div>
               </div>
             </section>
+
+            {/* Insurance / Self-pay ── 自費診療タブ（要件1）── */}
+            <section className="space-y-4 pt-4 border-t border-slate-100">
+              <h2 className="text-sm font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 pb-2 flex items-center gap-2">
+                <Wallet className="w-4 h-4 text-brand-500" /> {t('selfpay.title')}
+              </h2>
+              <p className="text-xs text-slate-500 font-semibold">{t('selfpay.subtitle')}</p>
+
+              <div className="grid grid-cols-2 gap-3">
+                {[
+                  { label: t('selfpay.selfPayOk'),         val: hospital.accessInfo?.selfPayAvailable,          icon: <Receipt className="w-4 h-4" /> },
+                  { label: t('selfpay.noInsuranceOk'),     val: hospital.accessInfo?.noInsuranceAccepted,       icon: <Shield className="w-4 h-4" /> },
+                  { label: t('selfpay.creditCard'),        val: hospital.accessInfo?.creditCardAccepted,        icon: <CreditCard className="w-4 h-4" /> },
+                  { label: t('selfpay.overseasInsurance'), val: hospital.accessInfo?.overseasInsuranceAccepted, icon: <Shield className="w-4 h-4" /> },
+                  { label: t('selfpay.certJa'),            val: hospital.accessInfo?.medicalCertificateJa,      icon: <FileText className="w-4 h-4" /> },
+                  { label: t('selfpay.certEn'),            val: hospital.accessInfo?.medicalCertificateEn,      icon: <FileText className="w-4 h-4" /> },
+                ].map((row, i) => (
+                  <div key={i} className="p-3 bg-slate-50 border border-slate-200/60 rounded-xl flex items-center gap-2">
+                    <span className={row.val === true ? 'text-accent-600' : row.val === false ? 'text-slate-300' : 'text-amber-500'}>{row.icon}</span>
+                    <div className="min-w-0">
+                      <p className="text-[10px] text-slate-400 font-bold leading-tight">{row.label}</p>
+                      <p className={`text-xs font-extrabold ${row.val === true ? 'text-accent-700' : row.val === false ? 'text-slate-400' : 'text-amber-600'}`}>
+                        {row.val === true ? '✓' : row.val === false ? '—' : t('selfpay.needConfirm')}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* 概算費用: 医療機関が提供・許可した文言がある場合のみ表示。無ければ「要事前確認」（費用は捏造しない） */}
+              <div className="p-4 bg-white border border-slate-200 rounded-2xl">
+                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">{t('selfpay.estCost')}</p>
+                <p className="text-sm font-bold text-slate-800">
+                  {hospital.accessInfo?.estimatedCostNote || t('selfpay.needConfirm')}
+                </p>
+              </div>
+
+              {hospital.accessInfo?.selfPayNote && (
+                <p className="text-xs text-slate-500 leading-relaxed">{hospital.accessInfo.selfPayNote}</p>
+              )}
+
+              {/* 注意文（要件1: 費用は医療機関により異なるため必ず事前確認） */}
+              <div className="bg-amber-50 border border-amber-200 p-4 rounded-2xl flex items-start gap-3">
+                <Info className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
+                <p className="text-xs text-amber-800 font-semibold leading-relaxed">{t('selfpay.caution')}</p>
+              </div>
+            </section>
+
+            {/* 安全表示（要件5: 情報は変更されうる／受診前に電話確認） */}
+            <div className="bg-slate-50 border border-slate-200 p-4 rounded-2xl flex items-start gap-3">
+              <Info className="w-4 h-4 text-slate-400 flex-shrink-0 mt-0.5" />
+              <p className="text-xs text-slate-500 font-semibold leading-relaxed">{t('safety.infoMayChange')}</p>
+            </div>
 
             {/* Document Notices */}
             <div className="bg-brand-50/50 border border-brand-100 p-5 rounded-2xl space-y-3">
