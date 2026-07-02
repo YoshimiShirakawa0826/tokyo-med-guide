@@ -18,6 +18,15 @@ export type ClinicAccessInfo = {
   nightOpen?: boolean;
   weekendOpen?: boolean;
   emergencyAvailable?: boolean;
+
+  // ── 自費診療 / Self-pay（すべて任意項目。欠損時は UI で「要事前確認」を表示する）──
+  // 注意: これらは医療機関が確認・許可した情報のみ掲載する前提。費用の誇張・比較表現は禁止。
+  selfPayAvailable?: boolean;      // 自費診療対応（保険なしでも受診可）
+  noInsuranceAccepted?: boolean;   // 健康保険証なしでの受診可否
+  estimatedCostNote?: string;      // 概算費用の説明文（数値ではなく医療機関提供の文言。例: "初診 ¥5,000〜"）
+  medicalCertificateJa?: boolean;  // 診断書対応（日本語）
+  medicalCertificateEn?: boolean;  // 診断書対応（英文）
+  selfPayNote?: string;            // 自費診療に関する医療機関からの注意文（任意）
 };
 
 export interface Hospital {

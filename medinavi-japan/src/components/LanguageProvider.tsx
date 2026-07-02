@@ -48,6 +48,56 @@ const translations = {
     'nav.home': 'ホーム',
     'nav.hospitals': '医療機関一覧',
     'nav.emergency': '緊急時ガイド',
+    'nav.symptoms': '症状から探す',
+
+    // 距離検索
+    'distance.title': '距離で絞り込む',
+    'distance.useLocation': '現在地を使う',
+    'distance.1km': '1km以内',
+    'distance.3km': '3km以内',
+    'distance.5km': '5km以内',
+    'distance.10km': '10km以内',
+    'distance.nearest': '近い順',
+    'distance.fromMe': '現在地から',
+    'distance.approx': '新宿中心からの目安',
+    'distance.denied': '位置情報が許可されていないため、新宿中心からの目安距離を表示しています。',
+    'distance.unsupported': 'お使いの環境では位置情報を利用できません。新宿中心からの目安を表示します。',
+
+    // 自費診療
+    'filter.selfPay': '自費診療対応',
+    'selfpay.title': '自費診療・保険 / Insurance & Self-pay',
+    'selfpay.subtitle': '健康保険証をお持ちでない訪日の方向けの情報です。',
+    'selfpay.selfPayOk': '自費診療対応',
+    'selfpay.noInsuranceOk': '保険証なしで受診可',
+    'selfpay.creditCard': 'クレジットカード',
+    'selfpay.overseasInsurance': '海外旅行保険',
+    'selfpay.certJa': '診断書（日本語）',
+    'selfpay.certEn': '診断書（英文）',
+    'selfpay.estCost': '概算費用',
+    'selfpay.needConfirm': '要事前確認',
+    'selfpay.caution': '費用は医療機関により異なるため、必ず事前にご確認ください。',
+
+    // 安全表示
+    'safety.infoMayChange': '医療機関の情報は変更される場合があります。受診前に必ずお電話等でご確認ください。',
+    'safety.notDiagnosis': '本アプリは診断を行うものではなく、医療機関をご案内するものです。',
+
+    // 症状ガイド
+    'symptom.title': '症状から診療科を探す',
+    'symptom.lead': '当てはまる症状を選ぶと、目安となる診療科をご案内します。',
+    'symptom.disclaimer': '※これは診断ではなく、受診する科の「目安」です。判断に迷う場合は #7119、緊急時は 119 へ。',
+    'symptom.emergency': '意識がない・大量出血・強い胸の痛みなどは、ためらわず 119 へ。',
+    'symptom.findClinics': 'この科のクリニックを探す',
+
+    // ボタン
+    'btn.callNow': '電話する',
+    'btn.openMap': '地図で開く',
+    'btn.needCareNow': '今すぐ受診したい',
+    'btn.findNearby': '近くの病院を探す',
+
+    // 地図
+    'map.show': '地図を表示',
+    'map.hide': '地図を閉じる',
+    'map.hint': '施設の 📍 ボタンを押すと、ここに地図で表示します。',
   },
   en: {
     'app.name': 'MediNavi JAPAN',
@@ -87,6 +137,56 @@ const translations = {
     'nav.home': 'Home',
     'nav.hospitals': 'Hospitals',
     'nav.emergency': 'Emergency Guide',
+    'nav.symptoms': 'By Symptom',
+
+    // Distance search
+    'distance.title': 'Filter by Distance',
+    'distance.useLocation': 'Use my location',
+    'distance.1km': 'Within 1km',
+    'distance.3km': 'Within 3km',
+    'distance.5km': 'Within 5km',
+    'distance.10km': 'Within 10km',
+    'distance.nearest': 'Nearest first',
+    'distance.fromMe': 'from you',
+    'distance.approx': 'approx. from Shinjuku center',
+    'distance.denied': 'Location not permitted. Showing approximate distance from Shinjuku center.',
+    'distance.unsupported': 'Location is unavailable on this device. Showing approximate distance from Shinjuku center.',
+
+    // Self-pay
+    'filter.selfPay': 'Self-pay Accepted',
+    'selfpay.title': 'Insurance & Self-pay',
+    'selfpay.subtitle': 'Information for visitors without Japanese health insurance.',
+    'selfpay.selfPayOk': 'Self-pay accepted',
+    'selfpay.noInsuranceOk': 'No insurance card OK',
+    'selfpay.creditCard': 'Credit card',
+    'selfpay.overseasInsurance': 'Travel insurance',
+    'selfpay.certJa': 'Medical certificate (JA)',
+    'selfpay.certEn': 'Medical certificate (EN)',
+    'selfpay.estCost': 'Estimated cost',
+    'selfpay.needConfirm': 'Please confirm',
+    'selfpay.caution': 'Costs vary by clinic. Always confirm in advance.',
+
+    // Safety
+    'safety.infoMayChange': 'Clinic information may change. Always confirm by phone before visiting.',
+    'safety.notDiagnosis': 'This app does not diagnose. It helps you find medical institutions.',
+
+    // Symptom guide
+    'symptom.title': 'Find a Department by Symptom',
+    'symptom.lead': 'Select your symptom to see a suggested department to visit.',
+    'symptom.disclaimer': '* This is not a diagnosis, only a guide to which department to visit. If unsure call #7119; for emergencies call 119.',
+    'symptom.emergency': 'For loss of consciousness, heavy bleeding, or severe chest pain, call 119 without delay.',
+    'symptom.findClinics': 'Find clinics in this department',
+
+    // Buttons
+    'btn.callNow': 'Call',
+    'btn.openMap': 'Open in Maps',
+    'btn.needCareNow': 'I need care now',
+    'btn.findNearby': 'Find clinics near me',
+
+    // Map
+    'map.show': 'Show map',
+    'map.hide': 'Close map',
+    'map.hint': 'Tap the 📍 button on a clinic to show it here on the map.',
   },
   zh: {
     'app.name': 'MediNavi JAPAN',
@@ -126,6 +226,56 @@ const translations = {
     'nav.home': '首页',
     'nav.hospitals': '医院列表',
     'nav.emergency': '紧急指南',
+    'nav.symptoms': '按症状查找',
+
+    // 距离检索
+    'distance.title': '按距离筛选',
+    'distance.useLocation': '使用我的位置',
+    'distance.1km': '1km以内',
+    'distance.3km': '3km以内',
+    'distance.5km': '5km以内',
+    'distance.10km': '10km以内',
+    'distance.nearest': '由近到远',
+    'distance.fromMe': '距您',
+    'distance.approx': '距新宿中心约',
+    'distance.denied': '未允许定位，显示距新宿中心的大致距离。',
+    'distance.unsupported': '当前环境无法使用定位，显示距新宿中心的大致距离。',
+
+    // 自费诊疗
+    'filter.selfPay': '接受自费',
+    'selfpay.title': '保险与自费',
+    'selfpay.subtitle': '面向没有日本健康保险的访日人士的信息。',
+    'selfpay.selfPayOk': '可自费就诊',
+    'selfpay.noInsuranceOk': '无保险证可就诊',
+    'selfpay.creditCard': '信用卡',
+    'selfpay.overseasInsurance': '海外旅行保险',
+    'selfpay.certJa': '诊断书（日文）',
+    'selfpay.certEn': '诊断书（英文）',
+    'selfpay.estCost': '大致费用',
+    'selfpay.needConfirm': '请事先确认',
+    'selfpay.caution': '费用因医疗机构而异，请务必事先确认。',
+
+    // 安全提示
+    'safety.infoMayChange': '医疗机构信息可能会变更。就诊前请务必致电确认。',
+    'safety.notDiagnosis': '本应用不提供诊断，仅协助您查找医疗机构。',
+
+    // 症状指南
+    'symptom.title': '按症状查找科室',
+    'symptom.lead': '选择您的症状，为您推荐就诊科室。',
+    'symptom.disclaimer': '※这不是诊断，仅为就诊科室的参考。不确定请拨打 #7119，紧急情况请拨打 119。',
+    'symptom.emergency': '如出现昏迷、大量出血、剧烈胸痛等，请立即拨打 119。',
+    'symptom.findClinics': '查找该科室的诊所',
+
+    // 按钮
+    'btn.callNow': '拨打电话',
+    'btn.openMap': '在地图中打开',
+    'btn.needCareNow': '我现在需要就诊',
+    'btn.findNearby': '查找附近的诊所',
+
+    // 地图
+    'map.show': '显示地图',
+    'map.hide': '关闭地图',
+    'map.hint': '点击诊所的 📍 按钮，在此以地图显示。',
   },
   ko: {
     'app.name': 'MediNavi JAPAN',
@@ -165,6 +315,56 @@ const translations = {
     'nav.home': '홈',
     'nav.hospitals': '병원 목록',
     'nav.emergency': '응급 가이드',
+    'nav.symptoms': '증상으로 찾기',
+
+    // 거리 검색
+    'distance.title': '거리로 필터링',
+    'distance.useLocation': '내 위치 사용',
+    'distance.1km': '1km 이내',
+    'distance.3km': '3km 이내',
+    'distance.5km': '5km 이내',
+    'distance.10km': '10km 이내',
+    'distance.nearest': '가까운 순',
+    'distance.fromMe': '내 위치에서',
+    'distance.approx': '신주쿠 중심 기준 약',
+    'distance.denied': '위치 정보가 허용되지 않아 신주쿠 중심 기준 대략 거리를 표시합니다.',
+    'distance.unsupported': '현재 환경에서는 위치를 사용할 수 없어 신주쿠 중심 기준 거리를 표시합니다.',
+
+    // 자비 진료
+    'filter.selfPay': '자비 진료 가능',
+    'selfpay.title': '보험 및 자비 진료',
+    'selfpay.subtitle': '일본 건강보험이 없는 방문객을 위한 정보입니다.',
+    'selfpay.selfPayOk': '자비 진료 가능',
+    'selfpay.noInsuranceOk': '보험증 없이 진료 가능',
+    'selfpay.creditCard': '신용카드',
+    'selfpay.overseasInsurance': '해외 여행자보험',
+    'selfpay.certJa': '진단서(일본어)',
+    'selfpay.certEn': '진단서(영문)',
+    'selfpay.estCost': '예상 비용',
+    'selfpay.needConfirm': '사전 확인 필요',
+    'selfpay.caution': '비용은 의료기관마다 다르므로 반드시 사전에 확인하십시오.',
+
+    // 안전 표시
+    'safety.infoMayChange': '의료기관 정보는 변경될 수 있습니다. 방문 전 반드시 전화로 확인하십시오.',
+    'safety.notDiagnosis': '이 앱은 진단을 제공하지 않으며 의료기관 안내를 돕습니다.',
+
+    // 증상 가이드
+    'symptom.title': '증상으로 진료과 찾기',
+    'symptom.lead': '증상을 선택하면 방문할 진료과를 안내합니다.',
+    'symptom.disclaimer': '※ 진단이 아니라 방문할 진료과의 참고입니다. 판단이 어려우면 #7119, 응급 시 119로 전화하십시오.',
+    'symptom.emergency': '의식이 없거나 대량 출혈, 심한 흉통이 있으면 즉시 119로 전화하십시오.',
+    'symptom.findClinics': '이 진료과 클리닉 찾기',
+
+    // 버튼
+    'btn.callNow': '전화하기',
+    'btn.openMap': '지도에서 열기',
+    'btn.needCareNow': '지금 진료가 필요해요',
+    'btn.findNearby': '가까운 병원 찾기',
+
+    // 지도
+    'map.show': '지도 표시',
+    'map.hide': '지도 닫기',
+    'map.hint': '클리닉의 📍 버튼을 누르면 여기 지도에 표시됩니다.',
   },
   es: {
     'app.name': 'MediNavi JAPAN',
@@ -204,6 +404,56 @@ const translations = {
     'nav.home': 'Inicio',
     'nav.hospitals': 'Hospitales',
     'nav.emergency': 'Guía de Emergencia',
+    'nav.symptoms': 'Por Síntoma',
+
+    // Búsqueda por distancia
+    'distance.title': 'Filtrar por distancia',
+    'distance.useLocation': 'Usar mi ubicación',
+    'distance.1km': 'Hasta 1km',
+    'distance.3km': 'Hasta 3km',
+    'distance.5km': 'Hasta 5km',
+    'distance.10km': 'Hasta 10km',
+    'distance.nearest': 'Más cercano primero',
+    'distance.fromMe': 'desde usted',
+    'distance.approx': 'aprox. desde el centro de Shinjuku',
+    'distance.denied': 'Ubicación no permitida. Mostrando distancia aproximada desde el centro de Shinjuku.',
+    'distance.unsupported': 'La ubicación no está disponible en este dispositivo. Mostrando distancia desde el centro de Shinjuku.',
+
+    // Pago privado
+    'filter.selfPay': 'Acepta pago privado',
+    'selfpay.title': 'Seguro y pago privado',
+    'selfpay.subtitle': 'Información para visitantes sin seguro médico japonés.',
+    'selfpay.selfPayOk': 'Acepta pago privado',
+    'selfpay.noInsuranceOk': 'Sin tarjeta de seguro OK',
+    'selfpay.creditCard': 'Tarjeta de crédito',
+    'selfpay.overseasInsurance': 'Seguro de viaje',
+    'selfpay.certJa': 'Certificado médico (JA)',
+    'selfpay.certEn': 'Certificado médico (EN)',
+    'selfpay.estCost': 'Costo estimado',
+    'selfpay.needConfirm': 'Confirme por favor',
+    'selfpay.caution': 'Los costos varían según la clínica. Confirme siempre con antelación.',
+
+    // Seguridad
+    'safety.infoMayChange': 'La información puede cambiar. Confirme siempre por teléfono antes de visitar.',
+    'safety.notDiagnosis': 'Esta aplicación no diagnostica; le ayuda a encontrar centros médicos.',
+
+    // Guía de síntomas
+    'symptom.title': 'Buscar Especialidad por Síntoma',
+    'symptom.lead': 'Seleccione su síntoma para ver la especialidad sugerida.',
+    'symptom.disclaimer': '* Esto no es un diagnóstico, solo una guía de qué especialidad visitar. Si no está seguro llame al #7119; en emergencias al 119.',
+    'symptom.emergency': 'Ante pérdida de conciencia, hemorragia grave o dolor torácico intenso, llame al 119 sin demora.',
+    'symptom.findClinics': 'Buscar clínicas de esta especialidad',
+
+    // Botones
+    'btn.callNow': 'Llamar',
+    'btn.openMap': 'Abrir en Maps',
+    'btn.needCareNow': 'Necesito atención ahora',
+    'btn.findNearby': 'Buscar clínicas cercanas',
+
+    // Mapa
+    'map.show': 'Mostrar mapa',
+    'map.hide': 'Cerrar mapa',
+    'map.hint': 'Toque el botón 📍 de una clínica para verla aquí en el mapa.',
   }
 };
 

@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation';
 import {
   AlertCircle, Search, Clock, Stethoscope, Languages,
   Shield, CreditCard, CheckCircle, ArrowRight, ChevronRight,
+  MapPin, Zap,
 } from 'lucide-react';
 
 const DEPT_ICONS: Record<string, string> = {
@@ -50,6 +51,7 @@ export default function Home() {
   const [nightWeekend, setNightWeekend] = useState(false);
   const [walkIn,       setWalkIn]       = useState(false);
   const [verified,     setVerified]     = useState(false);
+  const [selfPay,      setSelfPay]      = useState(false);
   const [showMore,     setShowMore]     = useState(false);
 
   const handleSearch = () => {
@@ -63,6 +65,7 @@ export default function Home() {
     if (nightWeekend)  p.set('nightweekend', 'true');
     if (walkIn)        p.set('walkin',       'true');
     if (verified)      p.set('verified',     'true');
+    if (selfPay)       p.set('selfpay',      'true');
     router.push(`/hospitals?${p}`);
   };
 
@@ -109,6 +112,36 @@ export default function Home() {
         </div>
 
         <div className="p-6 sm:p-8 space-y-7">
+
+          {/* ── 最優先アクション（3タップ以内で医療機関へ, 要件4）── */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <button
+              onClick={() => quickSearch({ open: 'true' })}
+              className="flex items-center gap-3 bg-gradient-to-r from-emergency-600 to-rose-600 text-white rounded-2xl px-5 py-4 shadow-lg hover:scale-[1.01] active:scale-95 transition-all"
+            >
+              <Zap className="w-6 h-6 flex-shrink-0" />
+              <span className="text-base font-extrabold text-left leading-tight">{t('btn.needCareNow')}</span>
+            </button>
+            <button
+              onClick={() => quickSearch({ dist: 'near' })}
+              className="flex items-center gap-3 bg-gradient-to-r from-brand-600 to-indigo-600 text-white rounded-2xl px-5 py-4 shadow-lg hover:scale-[1.01] active:scale-95 transition-all"
+            >
+              <MapPin className="w-6 h-6 flex-shrink-0" />
+              <span className="text-base font-extrabold text-left leading-tight">{t('btn.findNearby')}</span>
+            </button>
+          </div>
+
+          {/* 症状から探す（診断ではなく科の案内, 要件4） */}
+          <Link
+            href="/symptoms"
+            className="flex items-center justify-between gap-2 bg-white border border-slate-200 rounded-2xl px-4 py-3 hover:border-brand-300 hover:bg-brand-50/30 active:scale-95 transition-all"
+          >
+            <span className="flex items-center gap-2.5">
+              <Stethoscope className="w-5 h-5 text-brand-500 flex-shrink-0" />
+              <span className="text-sm font-bold text-slate-700">{t('symptom.title')}</span>
+            </span>
+            <ChevronRight className="w-4 h-4 text-slate-300" />
+          </Link>
 
           {/* ── 1タップ クイック検索 ── */}
           <div className="grid grid-cols-2 gap-3">
@@ -182,6 +215,22 @@ export default function Home() {
                   )}
                 </button>
               ))}
+
+              {/* 自費診療対応: 診療科タイルの最後に配置（診療科ではなく支払い条件だが導線として並べる） */}
+              <button
+                onClick={() => setSelfPay(v => !v)}
+                className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl border text-left transition-all active:scale-95 ${
+                  selfPay
+                    ? 'bg-amber-50 border-amber-400 text-amber-700 shadow-sm'
+                    : 'bg-white/60 border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-white'
+                }`}
+              >
+                <span className="text-lg leading-none flex-shrink-0">💴</span>
+                <span className="text-xs font-bold truncate">{t('filter.selfPay')}</span>
+                {selfPay && (
+                  <CheckCircle className="w-3.5 h-3.5 ml-auto flex-shrink-0 text-amber-500" />
+                )}
+              </button>
             </div>
           </div>
 
@@ -209,41 +258,63 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Advanced filters — collapsed */}
-          <div>
-            <button
-              onClick={() => setShowMore(v => !v)}
-              className="text-xs font-bold text-slate-400 hover:text-slate-600 transition-colors flex items-center gap-1"
-            >
-              <ChevronRight className={`w-3.5 h-3.5 transition-transform ${showMore ? 'rotate-90' : ''}`} />
-              {showMore ? '詳細フィルターを閉じる' : '詳細フィルターを表示'}
-            </button>
+          {/* Filters: 価値の高い条件は常時表示、残りは折りたたみ（中間案） */}
+          <div className="space-y-3">
+            {/* 常時表示: 夜間・休日 / 予約不要 */}
+            <div className="grid grid-cols-2 gap-3">
+              {[
+                { state: nightWeekend, set: setNightWeekend, icon: <Clock       className="w-4 h-4 flex-shrink-0" />, label: t('filter.nightWeekend') },
+                { state: walkIn,       set: setWalkIn,       icon: <Stethoscope className="w-4 h-4 flex-shrink-0" />, label: t('filter.walkIn')       },
+              ].map(({ state, set, icon, label }, i) => (
+                <label
+                  key={i}
+                  className={`flex items-center gap-2 px-3 py-2.5 rounded-2xl border cursor-pointer transition-all select-none ${
+                    state
+                      ? 'border-brand-500 bg-brand-50 text-brand-700 shadow-sm shadow-indigo-100'
+                      : 'border-slate-200 hover:border-slate-300 text-slate-600 bg-white/40'
+                  }`}
+                >
+                  <input type="checkbox" className="sr-only" checked={state} onChange={e => set(e.target.checked)} />
+                  <span className={state ? 'text-brand-600' : 'text-slate-400'}>{icon}</span>
+                  <span className="text-xs font-bold truncate">{label}</span>
+                </label>
+              ))}
+            </div>
 
-            {showMore && (
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-3">
-                {[
-                  { state: verified,     set: setVerified,     icon: <CheckCircle className="w-4 h-4 flex-shrink-0" />, label: t('filter.verified')     },
-                  { state: englishToday, set: setEnglishToday, icon: <Languages   className="w-4 h-4 flex-shrink-0" />, label: t('filter.englishToday') },
-                  { state: creditCard,   set: setCreditCard,   icon: <CreditCard  className="w-4 h-4 flex-shrink-0" />, label: t('filter.creditCard')   },
-                  { state: insurance,    set: setInsurance,    icon: <Shield      className="w-4 h-4 flex-shrink-0" />, label: t('filter.insurance')    },
-                  { state: nightWeekend, set: setNightWeekend, icon: <Clock       className="w-4 h-4 flex-shrink-0" />, label: t('filter.nightWeekend') },
-                  { state: walkIn,       set: setWalkIn,       icon: <Stethoscope className="w-4 h-4 flex-shrink-0" />, label: t('filter.walkIn')       },
-                ].map(({ state, set, icon, label }, i) => (
-                  <label
-                    key={i}
-                    className={`flex items-center gap-2 px-3 py-2.5 rounded-2xl border cursor-pointer transition-all select-none ${
-                      state
-                        ? 'border-brand-500 bg-brand-50 text-brand-700 shadow-sm shadow-indigo-100'
-                        : 'border-slate-200 hover:border-slate-300 text-slate-600 bg-white/40'
-                    }`}
-                  >
-                    <input type="checkbox" className="sr-only" checked={state} onChange={e => set(e.target.checked)} />
-                    <span className={state ? 'text-brand-600' : 'text-slate-400'}>{icon}</span>
-                    <span className="text-xs font-bold truncate">{label}</span>
-                  </label>
-                ))}
-              </div>
-            )}
+            {/* 折りたたみ: その他の条件 (4) */}
+            <div>
+              <button
+                onClick={() => setShowMore(v => !v)}
+                className="text-xs font-bold text-slate-500 hover:text-slate-700 transition-colors flex items-center gap-1"
+              >
+                <ChevronRight className={`w-3.5 h-3.5 transition-transform ${showMore ? 'rotate-90' : ''}`} />
+                {showMore ? '条件を閉じる' : 'その他の条件 (4)'}
+              </button>
+
+              {showMore && (
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-3">
+                  {[
+                    { state: verified,     set: setVerified,     icon: <CheckCircle className="w-4 h-4 flex-shrink-0" />, label: t('filter.verified')     },
+                    { state: englishToday, set: setEnglishToday, icon: <Languages   className="w-4 h-4 flex-shrink-0" />, label: t('filter.englishToday') },
+                    { state: creditCard,   set: setCreditCard,   icon: <CreditCard  className="w-4 h-4 flex-shrink-0" />, label: t('filter.creditCard')   },
+                    { state: insurance,    set: setInsurance,    icon: <Shield      className="w-4 h-4 flex-shrink-0" />, label: t('filter.insurance')    },
+                  ].map(({ state, set, icon, label }, i) => (
+                    <label
+                      key={i}
+                      className={`flex items-center gap-2 px-3 py-2.5 rounded-2xl border cursor-pointer transition-all select-none ${
+                        state
+                          ? 'border-brand-500 bg-brand-50 text-brand-700 shadow-sm shadow-indigo-100'
+                          : 'border-slate-200 hover:border-slate-300 text-slate-600 bg-white/40'
+                      }`}
+                    >
+                      <input type="checkbox" className="sr-only" checked={state} onChange={e => set(e.target.checked)} />
+                      <span className={state ? 'text-brand-600' : 'text-slate-400'}>{icon}</span>
+                      <span className="text-xs font-bold truncate">{label}</span>
+                    </label>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Search button */}
