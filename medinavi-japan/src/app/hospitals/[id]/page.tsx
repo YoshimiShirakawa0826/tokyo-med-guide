@@ -72,7 +72,7 @@ export default function HospitalDetail() {
       case 'ai_interview': return 'AI Phone Interview Verification';
       case 'manual_visit': return 'Manual Site Visit & Verification';
       case 'official_website': return 'Official Website Scrape';
-      default: return 'Open Data Directory (厚生労働省)';
+      default: return 'Open Data Directory (MHLW)';
     }
   };
 

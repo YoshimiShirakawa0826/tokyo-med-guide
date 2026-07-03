@@ -106,9 +106,9 @@ export default function EmergencyGuide() {
             <p className="text-xs text-slate-400 font-bold uppercase tracking-wider">Your Shinjuku Pilot Sandbox Coordinates</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="bg-white p-4 rounded-2xl border border-slate-200/60">
-                <span className="text-[10px] font-bold text-slate-400 block mb-1">日本語住所 (Japanese Address)</span>
+                <span className="text-[10px] font-bold text-slate-400 block mb-1">{t('emergency.jaAddressLabel')}</span>
                 <p className="text-sm font-bold text-slate-800">{mockLocation.ja}</p>
-                <p className="text-xs text-slate-400 mt-2 font-semibold">※オペレーターに現在地を聞かれたら、上の住所をそのまま読み上げてください。</p>
+                <p className="text-xs text-slate-400 mt-2 font-semibold">{t('emergency.readAddress')}</p>
               </div>
               <div className="bg-white p-4 rounded-2xl border border-slate-200/60">
                 <span className="text-[10px] font-bold text-slate-400 block mb-1">English Address</span>

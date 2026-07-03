@@ -98,6 +98,26 @@ const translations = {
     'map.show': '地図を表示',
     'map.hide': '地図を閉じる',
     'map.hint': '施設の 📍 ボタンを押すと、ここに地図で表示します。',
+    'map.free': 'キー不要・無料',
+
+    // トップページ
+    'home.badgeData': '東京 · 4,430施設 · 厚生労働省オープンデータ',
+    'home.badgeVerified': '確認済みクリニック収録',
+    'home.subtitle': '外国人旅行者のための東京医療機関検索',
+    'home.quickOpen': '今すぐ開いている',
+    'home.quickEngOpen': '英語対応 · 開院中',
+    'home.orRefine': 'または条件を絞り込む',
+    'home.closeFilters': '条件を閉じる',
+    'home.moreFilters': 'その他の条件 (4)',
+    'home.emergencyQ': '緊急ですか？',
+    'home.consultBadge': '救急相談',
+
+    // データ出典
+    'data.mhlwOpenData': '厚生労働省 オープンデータ',
+
+    // 緊急ページ 追加分
+    'emergency.jaAddressLabel': '日本語住所',
+    'emergency.readAddress': '※オペレーターに現在地を聞かれたら、上の住所をそのまま読み上げてください。',
   },
   en: {
     'app.name': 'MediNavi JAPAN',
@@ -187,6 +207,26 @@ const translations = {
     'map.show': 'Show map',
     'map.hide': 'Close map',
     'map.hint': 'Tap the 📍 button on a clinic to show it here on the map.',
+    'map.free': 'No key required · Free',
+
+    // Home page
+    'home.badgeData': 'Tokyo · 4,430 clinics · MHLW Open Data',
+    'home.badgeVerified': 'Verified clinics included',
+    'home.subtitle': 'Find medical care in Tokyo for international visitors',
+    'home.quickOpen': 'Open now',
+    'home.quickEngOpen': 'English support · Open now',
+    'home.orRefine': 'or refine your search',
+    'home.closeFilters': 'Close filters',
+    'home.moreFilters': 'More filters (4)',
+    'home.emergencyQ': 'Emergency?',
+    'home.consultBadge': 'Advice line',
+
+    // Data source
+    'data.mhlwOpenData': 'MHLW Open Data',
+
+    // Emergency page (additional)
+    'emergency.jaAddressLabel': 'Japanese Address (read aloud)',
+    'emergency.readAddress': 'If the operator asks for your location, read the address above aloud.',
   },
   zh: {
     'app.name': 'MediNavi JAPAN',
@@ -276,6 +316,26 @@ const translations = {
     'map.show': '显示地图',
     'map.hide': '关闭地图',
     'map.hint': '点击诊所的 📍 按钮，在此以地图显示。',
+    'map.free': '无需密钥 · 免费',
+
+    // 首页
+    'home.badgeData': '东京 · 4,430家诊所 · 厚生劳动省开放数据',
+    'home.badgeVerified': '收录已确认诊所',
+    'home.subtitle': '为外国游客提供的东京医疗机构检索',
+    'home.quickOpen': '现在营业',
+    'home.quickEngOpen': '英语服务 · 营业中',
+    'home.orRefine': '或筛选条件',
+    'home.closeFilters': '收起条件',
+    'home.moreFilters': '其他条件 (4)',
+    'home.emergencyQ': '紧急情况？',
+    'home.consultBadge': '急救咨询',
+
+    // 数据来源
+    'data.mhlwOpenData': '厚生劳动省开放数据',
+
+    // 紧急页面 追加
+    'emergency.jaAddressLabel': '日语地址（朗读用）',
+    'emergency.readAddress': '※如接线员询问您的位置，请照读上面的地址。',
   },
   ko: {
     'app.name': 'MediNavi JAPAN',
@@ -365,6 +425,26 @@ const translations = {
     'map.show': '지도 표시',
     'map.hide': '지도 닫기',
     'map.hint': '클리닉의 📍 버튼을 누르면 여기 지도에 표시됩니다.',
+    'map.free': '키 불필요 · 무료',
+
+    // 홈
+    'home.badgeData': '도쿄 · 4,430개 클리닉 · 후생노동성 오픈데이터',
+    'home.badgeVerified': '확인된 클리닉 수록',
+    'home.subtitle': '외국인 여행자를 위한 도쿄 의료기관 검색',
+    'home.quickOpen': '지금 진료중',
+    'home.quickEngOpen': '영어 지원 · 진료중',
+    'home.orRefine': '또는 조건으로 좁히기',
+    'home.closeFilters': '조건 닫기',
+    'home.moreFilters': '기타 조건 (4)',
+    'home.emergencyQ': '응급상황인가요?',
+    'home.consultBadge': '응급상담',
+
+    // 데이터 출처
+    'data.mhlwOpenData': '후생노동성 오픈데이터',
+
+    // 응급 페이지 추가
+    'emergency.jaAddressLabel': '일본어 주소 (읽어주기용)',
+    'emergency.readAddress': '※오퍼레이터가 현재 위치를 물으면 위 주소를 그대로 읽어주세요.',
   },
   es: {
     'app.name': 'MediNavi JAPAN',
@@ -454,6 +534,26 @@ const translations = {
     'map.show': 'Mostrar mapa',
     'map.hide': 'Cerrar mapa',
     'map.hint': 'Toque el botón 📍 de una clínica para verla aquí en el mapa.',
+    'map.free': 'Sin clave · Gratis',
+
+    // Página de inicio
+    'home.badgeData': 'Tokio · 4.430 clínicas · Datos abiertos del MHLW',
+    'home.badgeVerified': 'Incluye clínicas verificadas',
+    'home.subtitle': 'Buscador de centros médicos en Tokio para viajeros extranjeros',
+    'home.quickOpen': 'Abierto ahora',
+    'home.quickEngOpen': 'Inglés disponible · Abierto',
+    'home.orRefine': 'o refine su búsqueda',
+    'home.closeFilters': 'Cerrar filtros',
+    'home.moreFilters': 'Más filtros (4)',
+    'home.emergencyQ': '¿Emergencia?',
+    'home.consultBadge': 'Línea de consulta',
+
+    // Fuente de datos
+    'data.mhlwOpenData': 'Datos abiertos del MHLW',
+
+    // Página de emergencia (adicional)
+    'emergency.jaAddressLabel': 'Dirección en japonés (para leer)',
+    'emergency.readAddress': 'Si el operador pregunta por su ubicación, lea en voz alta la dirección de arriba.',
   }
 };
 

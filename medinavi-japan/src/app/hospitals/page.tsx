@@ -146,7 +146,7 @@ function HospitalsContent() {
             <span className="text-xs font-bold text-slate-700">Tokyo Foreign-Language Clinics:</span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-xs font-extrabold text-brand-600">{hospitals.length.toLocaleString()} clinics · 厚生労働省 Open Data</span>
+            <span className="text-xs font-extrabold text-brand-600">{hospitals.length.toLocaleString()} clinics · {t('data.mhlwOpenData')}</span>
           </div>
         </div>
       </div>
@@ -335,7 +335,7 @@ function HospitalsContent() {
                 >
                   <MapPin className="w-4 h-4" /> {t('map.show')}
                 </button>
-                <p className="text-[11px] text-slate-500">© OpenStreetMap · キー不要・無料</p>
+                <p className="text-[11px] text-slate-500">© OpenStreetMap · {t('map.free')}</p>
               </div>
             </div>
           ) : (

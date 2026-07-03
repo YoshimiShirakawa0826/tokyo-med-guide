@@ -85,18 +85,18 @@ export default function Home() {
       <div className="text-center space-y-4">
         <div className="flex flex-wrap items-center justify-center gap-3">
           <span className="inline-flex items-center gap-1.5 bg-brand-50 border border-brand-200/80 rounded-full px-3.5 py-1 text-xs font-bold text-brand-700 shadow-xs">
-            東京 · 4,430施設 · 厚生労働省オープンデータ
+            {t('home.badgeData')}
           </span>
           <span className="inline-flex items-center gap-1.5 bg-accent-50 border border-accent-200 rounded-full px-3.5 py-1 text-xs font-bold text-accent-700 shadow-xs">
             <CheckCircle className="w-3.5 h-3.5 text-accent-600" />
-            確認済みクリニック収録
+            {t('home.badgeVerified')}
           </span>
         </div>
         <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-slate-900 leading-tight">
           Tokyo <span className="bg-gradient-to-r from-brand-600 to-indigo-500 bg-clip-text text-transparent">Med Finder</span>
         </h1>
         <p className="text-base text-slate-500 font-semibold">
-          外国人旅行者のための東京医療機関検索
+          {t('home.subtitle')}
         </p>
       </div>
 
@@ -151,7 +151,7 @@ export default function Home() {
             >
               <Clock className="w-5 h-5 text-accent-600 flex-shrink-0" />
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-extrabold text-accent-700 leading-tight">今すぐ開いている</p>
+                <p className="text-sm font-extrabold text-accent-700 leading-tight">{t('home.quickOpen')}</p>
                 <p className="text-xs text-accent-500 font-semibold mt-0.5">Open Now</p>
               </div>
               <ChevronRight className="w-4 h-4 text-accent-300 flex-shrink-0 group-hover:translate-x-0.5 transition-transform" />
@@ -163,7 +163,7 @@ export default function Home() {
             >
               <Languages className="w-5 h-5 text-brand-600 flex-shrink-0" />
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-extrabold text-brand-700 leading-tight">英語対応 · 開院中</p>
+                <p className="text-sm font-extrabold text-brand-700 leading-tight">{t('home.quickEngOpen')}</p>
                 <p className="text-xs text-brand-400 font-semibold mt-0.5">English · Open Now</p>
               </div>
               <ChevronRight className="w-4 h-4 text-brand-300 flex-shrink-0 group-hover:translate-x-0.5 transition-transform" />
@@ -173,7 +173,7 @@ export default function Home() {
           {/* divider */}
           <div className="flex items-center gap-3">
             <div className="flex-1 border-t border-slate-100" />
-            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">または条件を絞り込む</span>
+            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{t('home.orRefine')}</span>
             <div className="flex-1 border-t border-slate-100" />
           </div>
 
@@ -288,7 +288,7 @@ export default function Home() {
                 className="text-xs font-bold text-slate-500 hover:text-slate-700 transition-colors flex items-center gap-1"
               >
                 <ChevronRight className={`w-3.5 h-3.5 transition-transform ${showMore ? 'rotate-90' : ''}`} />
-                {showMore ? '条件を閉じる' : 'その他の条件 (4)'}
+                {showMore ? t('home.closeFilters') : t('home.moreFilters')}
               </button>
 
               {showMore && (
@@ -333,7 +333,7 @@ export default function Home() {
         <div className="flex items-center gap-2 mb-4">
           <AlertCircle className="w-5 h-5 text-emergency-600" />
           <h2 className="text-xl font-extrabold text-slate-900">
-            緊急ですか？ <span className="text-emergency-600 font-bold text-lg">/ Emergency?</span>
+            {t('home.emergencyQ')}
           </h2>
         </div>
 
@@ -364,7 +364,7 @@ export default function Home() {
           <div className="relative overflow-hidden bg-white border border-slate-200 p-6 rounded-3xl shadow-md hover:shadow-lg transition-all flex flex-col justify-between">
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <span className="bg-amber-50 text-amber-600 border border-amber-200 px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider">救急相談</span>
+                <span className="bg-amber-50 text-amber-600 border border-amber-200 px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider">{t('home.consultBadge')}</span>
                 <span className="text-2xl">📞</span>
               </div>
               <h3 className="text-xl font-bold text-slate-900">{t('emergency.consultation')}</h3>
