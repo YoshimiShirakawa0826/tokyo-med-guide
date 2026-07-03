@@ -118,6 +118,11 @@ const translations = {
     // 緊急ページ 追加分
     'emergency.jaAddressLabel': '日本語住所',
     'emergency.readAddress': '※オペレーターに現在地を聞かれたら、上の住所をそのまま読み上げてください。',
+    'emergency.tryCall': '#7119 に発信を試す',
+    'emergency.copyNumber': '番号をコピー',
+    'emergency.copied': 'コピーしました',
+    'emergency.dialManual': 'リンクで発信できない場合は、電話のキーパッドで #7119 を手動でダイヤルしてください。',
+    'emergency.regionNote': '#7119 は東京都など日本の一部地域のみのサービスです。',
   },
   en: {
     'app.name': 'MediNavi JAPAN',
@@ -227,6 +232,11 @@ const translations = {
     // Emergency page (additional)
     'emergency.jaAddressLabel': 'Japanese Address (read aloud)',
     'emergency.readAddress': 'If the operator asks for your location, read the address above aloud.',
+    'emergency.tryCall': 'Try calling #7119',
+    'emergency.copyNumber': 'Copy number',
+    'emergency.copied': 'Copied',
+    'emergency.dialManual': "If the link does not start the call, dial #7119 manually on your phone's keypad.",
+    'emergency.regionNote': '#7119 is available only in Tokyo and some other regions of Japan.',
   },
   zh: {
     'app.name': 'MediNavi JAPAN',
@@ -336,6 +346,11 @@ const translations = {
     // 紧急页面 追加
     'emergency.jaAddressLabel': '日语地址（朗读用）',
     'emergency.readAddress': '※如接线员询问您的位置，请照读上面的地址。',
+    'emergency.tryCall': '尝试拨打 #7119',
+    'emergency.copyNumber': '复制号码',
+    'emergency.copied': '已复制',
+    'emergency.dialManual': '如果链接无法拨号，请在电话键盘上手动拨打 #7119。',
+    'emergency.regionNote': '#7119 仅在东京都等日本部分地区提供。',
   },
   ko: {
     'app.name': 'MediNavi JAPAN',
@@ -445,6 +460,11 @@ const translations = {
     // 응급 페이지 추가
     'emergency.jaAddressLabel': '일본어 주소 (읽어주기용)',
     'emergency.readAddress': '※오퍼레이터가 현재 위치를 물으면 위 주소를 그대로 읽어주세요.',
+    'emergency.tryCall': '#7119 발신 시도',
+    'emergency.copyNumber': '번호 복사',
+    'emergency.copied': '복사됨',
+    'emergency.dialManual': '링크로 발신되지 않으면 전화 키패드에서 #7119를 직접 눌러 거세요.',
+    'emergency.regionNote': '#7119는 도쿄도 등 일본 일부 지역에서만 이용할 수 있습니다.',
   },
   es: {
     'app.name': 'MediNavi JAPAN',
@@ -554,6 +574,11 @@ const translations = {
     // Página de emergencia (adicional)
     'emergency.jaAddressLabel': 'Dirección en japonés (para leer)',
     'emergency.readAddress': 'Si el operador pregunta por su ubicación, lea en voz alta la dirección de arriba.',
+    'emergency.tryCall': 'Intentar llamar al #7119',
+    'emergency.copyNumber': 'Copiar número',
+    'emergency.copied': 'Copiado',
+    'emergency.dialManual': 'Si el enlace no inicia la llamada, marque #7119 manualmente en el teclado.',
+    'emergency.regionNote': '#7119 solo está disponible en Tokio y algunas otras regiones de Japón.',
   }
 };
 

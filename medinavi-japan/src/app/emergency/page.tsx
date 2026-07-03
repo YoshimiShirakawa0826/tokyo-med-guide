@@ -1,13 +1,25 @@
 "use client";
 
 import { useLanguage } from '@/components/LanguageProvider';
-import { AlertCircle, Phone, Info, MapPin, Sparkles, Languages, ChevronDown, ChevronUp } from 'lucide-react';
+import { AlertCircle, Phone, Info, MapPin, Sparkles, Languages, ChevronDown, ChevronUp, Copy, Check } from 'lucide-react';
 import { useState } from 'react';
 
 export default function EmergencyGuide() {
   const { t } = useLanguage();
   const [showLocation, setShowLocation] = useState(false);
   const [showPhrases, setShowPhrases] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  // #7119 はリンク発信が保証できないため、番号をクリップボードにコピーできるようにする。
+  const copy7119 = async () => {
+    try {
+      await navigator.clipboard.writeText('#7119');
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      setCopied(false);
+    }
+  };
 
   // Mock Shinjuku location for demo
   const mockLocation = {
@@ -77,13 +89,39 @@ export default function EmergencyGuide() {
             </div>
           </div>
           
-          <div className="pt-6">
-            <a 
-              href="tel:7119"
+          <div className="pt-6 space-y-3">
+            {/* 番号を大きく表示＋コピー（リンク発信に依存しないため） */}
+            <div className="flex items-center justify-between gap-3 bg-brand-50 border border-brand-100 rounded-2xl px-5 py-4">
+              <span className="text-3xl font-black text-brand-700 tracking-tight tabular-nums">#7119</span>
+              <button
+                onClick={copy7119}
+                aria-live="polite"
+                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold text-brand-700 bg-white border border-brand-200 hover:bg-brand-100 active:scale-95 transition-all"
+              >
+                {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                {copied ? t('emergency.copied') : t('emergency.copyNumber')}
+              </button>
+            </div>
+
+            {/* 補助リンク（OS/キャリアにより発信できない場合あり） */}
+            <a
+              href="tel:%237119"
               className="w-full inline-flex items-center justify-center px-6 py-4 border border-transparent text-lg font-bold rounded-2xl bg-brand-600 text-white hover:bg-brand-700 hover:scale-[1.02] active:scale-[0.98] transition-all shadow-md shadow-indigo-100"
             >
-              <Phone className="w-5 h-5 mr-2" /> Call #7119 (Consultation)
+              <Phone className="w-5 h-5 mr-2" /> {t('emergency.tryCall')}
             </a>
+
+            {/* 手動ダイヤルの注意（選択言語） */}
+            <p className="flex items-start gap-2 text-xs text-amber-700 font-semibold leading-relaxed">
+              <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5 text-amber-500" />
+              {t('emergency.dialManual')}
+            </p>
+
+            {/* 地域限定の注記（選択言語） */}
+            <p className="flex items-start gap-2 text-xs text-slate-500 font-semibold leading-relaxed">
+              <Info className="w-4 h-4 flex-shrink-0 mt-0.5 text-slate-400" />
+              {t('emergency.regionNote')}
+            </p>
           </div>
         </div>
       </div>

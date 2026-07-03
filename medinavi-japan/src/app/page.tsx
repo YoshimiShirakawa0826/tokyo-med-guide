@@ -373,7 +373,7 @@ export default function Home() {
               </p>
             </div>
             <div className="pt-5 flex gap-3">
-              <a href="tel:7119" className="flex-grow inline-flex items-center justify-center py-2.5 px-4 text-sm font-extrabold rounded-2xl bg-amber-500 text-white hover:bg-amber-600 transition-all shadow-md shadow-amber-100">
+              <a href="tel:%237119" className="flex-grow inline-flex items-center justify-center py-2.5 px-4 text-sm font-extrabold rounded-2xl bg-amber-500 text-white hover:bg-amber-600 transition-all shadow-md shadow-amber-100">
                 Call #7119
               </a>
               <Link href="/emergency" className="inline-flex items-center justify-center p-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-600 border border-slate-200/50 transition-all">
