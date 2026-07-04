@@ -5,8 +5,12 @@ import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Hospital, Language, departments } from '@/types';
 import { MapPin, Phone, Clock, AlertTriangle, ArrowLeft, CheckCircle, CreditCard, Shield, Sparkles, MessageSquare, Navigation, ExternalLink, Wallet, LocateFixed, Info } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Suspense } from 'react';
+
+// 描画する検索結果の上限。全件(最大4,430)をDOMに出すと重いため上位のみ描画する。
+// 近い順ソート時は「最寄り上位」、非ソート時は「先頭」の N 件になる。
+const RESULT_CAP = 100;
 import { useGeolocation, distanceKm, formatDistance, DISTANCE_OPTIONS, SHINJUKU_CENTER, AREA_PRESETS } from '@/lib/geo';
 
 function HospitalsContent() {
@@ -99,26 +103,36 @@ function HospitalsContent() {
     setMapVisible(true);
   };
 
-  const filteredHospitals = hospitals.filter(h => {
-    if (deptFilter && h.departments.length > 0 && !h.departments.includes(deptFilter)) return false;
-    if (langFilter && !h.supportedLanguages.includes(langFilter as Language)) return false;  // eslint-disable-line @typescript-eslint/no-explicit-any
-    if (openNowFilter && !h.isOpenNow) return false;
-    if (engTodayFilter && !h.accessInfo?.englishSupportToday) return false;
-    if (cardFilter && !h.accessInfo?.creditCardAccepted) return false;
-    if (insuranceFilter && !h.accessInfo?.overseasInsuranceAccepted) return false;
-    if (nightWeekendFilter && !h.accessInfo?.nightOpen && !h.accessInfo?.weekendOpen) return false;
-    if (walkInFilter && !h.accessInfo?.walkInAvailable) return false;
-    if (verifiedFilter && h.verification?.status !== 'verified') return false;
-    if (selfPayFilter && !h.accessInfo?.selfPayAvailable) return false;
-    return true;
-  });
+  // フィルタ→Haversine距離付与→（距離モード時）半径絞り込み＆近い順ソート。
+  // 無関係な状態変化（地図の開閉・コピー等）での再計算を避けるため useMemo でメモ化する。
+  const processed = useMemo(() => {
+    const filtered = hospitals.filter(h => {
+      if (deptFilter && h.departments.length > 0 && !h.departments.includes(deptFilter)) return false;
+      if (langFilter && !h.supportedLanguages.includes(langFilter as Language)) return false;
+      if (openNowFilter && !h.isOpenNow) return false;
+      if (engTodayFilter && !h.accessInfo?.englishSupportToday) return false;
+      if (cardFilter && !h.accessInfo?.creditCardAccepted) return false;
+      if (insuranceFilter && !h.accessInfo?.overseasInsuranceAccepted) return false;
+      if (nightWeekendFilter && !h.accessInfo?.nightOpen && !h.accessInfo?.weekendOpen) return false;
+      if (walkInFilter && !h.accessInfo?.walkInAvailable) return false;
+      if (verifiedFilter && h.verification?.status !== 'verified') return false;
+      if (selfPayFilter && !h.accessInfo?.selfPayAvailable) return false;
+      return true;
+    });
+    let arr = filtered.map(h => ({ h, dist: distanceKm(refPoint, h.latitude, h.longitude) }));
+    if (activeRadius !== 'off') {
+      if (typeof activeRadius === 'number') arr = arr.filter(x => x.dist <= activeRadius);
+      arr = arr.sort((a, b) => a.dist - b.dist);
+    }
+    return arr;
+  }, [
+    hospitals, refPoint.lat, refPoint.lng, activeRadius,
+    deptFilter, langFilter, openNowFilter, engTodayFilter, cardFilter,
+    insuranceFilter, nightWeekendFilter, walkInFilter, verifiedFilter, selfPayFilter,
+  ]);
 
-  // 各施設に Haversine 距離を付与。距離モード時は半径で絞り込み＆近い順にソート。
-  let processed = filteredHospitals.map(h => ({ h, dist: distanceKm(refPoint, h.latitude, h.longitude) }));
-  if (activeRadius !== 'off') {
-    if (typeof activeRadius === 'number') processed = processed.filter(x => x.dist <= activeRadius);
-    processed = [...processed].sort((a, b) => a.dist - b.dist);
-  }
+  // 描画は上位 RESULT_CAP 件のみ（件数はヘッダの processed.length で総数表示）。
+  const visible = processed.slice(0, RESULT_CAP);
 
   const getDeptNames = (deptIds: string[]) => {
     return deptIds.map(id => {
@@ -169,10 +183,15 @@ function HospitalsContent() {
 
         {/* Hospital List */}
         <div className="w-full lg:w-1/2 space-y-6">
-          <div className="flex justify-between items-center border-b border-slate-200 pb-3">
+          <div className="border-b border-slate-200 pb-3">
             <h1 className="text-2xl font-bold text-slate-900">
               {processed.length.toLocaleString()} <span className="text-slate-500 font-medium text-lg">Clinics Found</span>
             </h1>
+            {processed.length > RESULT_CAP && (
+              <p className="text-[11px] text-slate-400 font-semibold mt-1">
+                {t('list.showing')} {RESULT_CAP.toLocaleString()} / {processed.length.toLocaleString()}
+              </p>
+            )}
           </div>
 
           {/* ── 距離フィルタ（要件2）: 位置情報は任意。未許可でも新宿中心からの目安で動作 ── */}
@@ -244,7 +263,7 @@ function HospitalsContent() {
                 No clinics found matching your criteria.
               </div>
             ) : (
-              processed.map(({ h: hospital, dist }) => (
+              visible.map(({ h: hospital, dist }) => (
                 <div key={hospital.id} className={`hover-lift bg-white rounded-3xl border p-6 transition-all ${hospital.verification?.status === 'verified' ? 'border-brand-200 bg-brand-50/5' : 'border-slate-200/80 shadow-xs'}`}>
 
                   {/* Upper Verification & Badges */}
