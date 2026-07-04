@@ -4,10 +4,10 @@ import { useLanguage } from '@/components/LanguageProvider';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Hospital, Language, departments } from '@/types';
-import { MapPin, Phone, Clock, AlertTriangle, ArrowLeft, CheckCircle, CreditCard, Shield, Sparkles, MessageSquare, Navigation, ExternalLink, Wallet, LocateFixed } from 'lucide-react';
+import { MapPin, Phone, Clock, AlertTriangle, ArrowLeft, CheckCircle, CreditCard, Shield, Sparkles, MessageSquare, Navigation, ExternalLink, Wallet, LocateFixed, Info } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Suspense } from 'react';
-import { useGeolocation, distanceKm, formatDistance, DISTANCE_OPTIONS, SHINJUKU_CENTER } from '@/lib/geo';
+import { useGeolocation, distanceKm, formatDistance, DISTANCE_OPTIONS, SHINJUKU_CENTER, AREA_PRESETS } from '@/lib/geo';
 
 function HospitalsContent() {
   const { language, t } = useLanguage();
@@ -66,9 +66,23 @@ function HospitalsContent() {
     distParam ? (distParam === 'near' ? null : Number(distParam)) : 'off'
   );
 
-  // 基準点: 現在地が取得できていればそれを、なければ新宿中心（目安）を使う。
-  const refPoint = geo.coords ?? SHINJUKU_CENTER;
+  // フォールバック: 位置情報が使えない場合にユーザーが選ぶエリア/駅（任意）。
+  const [manualPoint, setManualPoint] = useState<{ name: string; lat: number; lng: number } | null>(null);
+
+  // 基準点の優先順位: 実際の現在地 → 手動選択エリア → 新宿中心（既定の目安）。
+  const refPoint = geo.coords ?? (manualPoint ? { lat: manualPoint.lat, lng: manualPoint.lng } : SHINJUKU_CENTER);
   const usingRealLocation = !!geo.coords;
+
+  // 位置取得に成功したら、既定で「近い順」に並べ替える（要件: 取得成功時に距離順ソート）。
+  useEffect(() => {
+    if (geo.status === 'granted') setActiveRadius(r => (r === 'off' ? null : r));
+  }, [geo.status]);
+
+  // フォールバックのエリアを選んだときも近い順にする。位置情報は端末内のみで使用（サーバー送信なし）。
+  const selectArea = (a: { name: string; lat: number; lng: number }) => {
+    setManualPoint(a);
+    setActiveRadius(r => (r === 'off' ? null : r));
+  };
 
   // 地図表示（要件3: 初期はリストのみ。ユーザーが「地図を表示」を押したときだけ OSM を読み込む）。
   // OpenStreetMap 埋め込みはキー不要・無料で、Google Maps API 課金は一切発生しない。
@@ -163,6 +177,13 @@ function HospitalsContent() {
 
           {/* ── 距離フィルタ（要件2）: 位置情報は任意。未許可でも新宿中心からの目安で動作 ── */}
           <div className="bg-white border border-slate-200/80 rounded-2xl p-3 space-y-2.5 shadow-xs">
+            {/* 事前説明（許可を求める前に表示。位置情報は端末内のみで使用しサーバー送信しない旨を明記） */}
+            {!usingRealLocation && (
+              <p className="flex items-start gap-1.5 text-[11px] text-slate-500 font-semibold leading-relaxed">
+                <Info className="w-3.5 h-3.5 flex-shrink-0 mt-0.5 text-brand-400" />
+                {t('distance.consent')}
+              </p>
+            )}
             <div className="flex flex-wrap items-center gap-2">
               <button
                 onClick={() => geo.request()}
@@ -187,13 +208,34 @@ function HospitalsContent() {
                 );
               })}
             </div>
-            {/* 基準点の説明（現在地 or 新宿中心の目安） */}
+            {/* 基準点の説明（現在地 / 選択エリア / 新宿中心の目安） */}
             <p className="text-[11px] text-slate-400 font-semibold leading-relaxed">
-              {geo.status === 'denied' ? t('distance.denied')
+              {usingRealLocation ? `📍 ${t('distance.useLocation')}`
+                : manualPoint ? `📍 ${manualPoint.name}`
+                : geo.status === 'denied' ? t('distance.denied')
                 : geo.status === 'unsupported' ? t('distance.unsupported')
-                : usingRealLocation ? `📍 ${t('distance.useLocation')}`
+                : geo.status === 'error' ? t('distance.denied')
                 : t('distance.approx')}
             </p>
+            {/* フォールバック: 取得できない/拒否時にエリア・駅を選んで基準点にする */}
+            {!usingRealLocation && (geo.status === 'denied' || geo.status === 'unsupported' || geo.status === 'error') && (
+              <div className="pt-2 space-y-1.5 border-t border-slate-100">
+                <p className="text-[11px] font-bold text-slate-500">{t('distance.chooseArea')}</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {AREA_PRESETS.map(a => (
+                    <button
+                      key={a.name}
+                      onClick={() => selectArea(a)}
+                      className={`px-2.5 py-1 rounded-lg text-[11px] font-bold border transition-all active:scale-95 ${
+                        manualPoint?.name === a.name ? 'bg-brand-600 border-brand-600 text-white shadow-sm' : 'bg-white border-slate-200 text-slate-600 hover:border-slate-300'
+                      }`}
+                    >
+                      {a.name}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="overflow-y-auto max-h-[750px] pr-3 space-y-4 scrollbar-thin scrollbar-thumb-slate-200">

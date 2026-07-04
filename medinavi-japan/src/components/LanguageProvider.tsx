@@ -62,6 +62,9 @@ const translations = {
     'distance.approx': '新宿中心からの目安',
     'distance.denied': '位置情報が許可されていないため、新宿中心からの目安距離を表示しています。',
     'distance.unsupported': 'お使いの環境では位置情報を利用できません。新宿中心からの目安を表示します。',
+    'distance.consent': '近くの病院を探すために位置情報を使います。位置情報は端末内でのみ使用し、サーバーには送信しません。',
+    'distance.chooseArea': '位置情報が使えない場合は、エリア・駅を選んでください',
+
 
     // 自費診療
     'filter.selfPay': '自費診療対応',
@@ -176,6 +179,9 @@ const translations = {
     'distance.approx': 'approx. from Shinjuku center',
     'distance.denied': 'Location not permitted. Showing approximate distance from Shinjuku center.',
     'distance.unsupported': 'Location is unavailable on this device. Showing approximate distance from Shinjuku center.',
+    'distance.consent': 'We use your location to find clinics near you. Your location stays on your device and is never sent to our servers.',
+    'distance.chooseArea': 'If location is unavailable, choose an area or station',
+
 
     // Self-pay
     'filter.selfPay': 'Self-pay Accepted',
@@ -290,6 +296,9 @@ const translations = {
     'distance.approx': '距新宿中心约',
     'distance.denied': '未允许定位，显示距新宿中心的大致距离。',
     'distance.unsupported': '当前环境无法使用定位，显示距新宿中心的大致距离。',
+    'distance.consent': '我们使用您的位置来查找附近的诊所。位置信息仅在您的设备上使用，绝不会发送到服务器。',
+    'distance.chooseArea': '如果无法使用定位，请选择区域或车站',
+
 
     // 自费诊疗
     'filter.selfPay': '接受自费',
@@ -404,6 +413,9 @@ const translations = {
     'distance.approx': '신주쿠 중심 기준 약',
     'distance.denied': '위치 정보가 허용되지 않아 신주쿠 중심 기준 대략 거리를 표시합니다.',
     'distance.unsupported': '현재 환경에서는 위치를 사용할 수 없어 신주쿠 중심 기준 거리를 표시합니다.',
+    'distance.consent': '근처 병원을 찾기 위해 위치 정보를 사용합니다. 위치 정보는 기기 내에서만 사용되며 서버로 전송되지 않습니다.',
+    'distance.chooseArea': '위치 정보를 사용할 수 없으면 지역·역을 선택하세요',
+
 
     // 자비 진료
     'filter.selfPay': '자비 진료 가능',
@@ -518,6 +530,9 @@ const translations = {
     'distance.approx': 'aprox. desde el centro de Shinjuku',
     'distance.denied': 'Ubicación no permitida. Mostrando distancia aproximada desde el centro de Shinjuku.',
     'distance.unsupported': 'La ubicación no está disponible en este dispositivo. Mostrando distancia desde el centro de Shinjuku.',
+    'distance.consent': 'Usamos tu ubicación para encontrar clínicas cercanas. Tu ubicación permanece en tu dispositivo y nunca se envía a nuestros servidores.',
+    'distance.chooseArea': 'Si la ubicación no está disponible, elige una zona o estación',
+
 
     // Pago privado
     'filter.selfPay': 'Acepta pago privado',
