@@ -7,11 +7,11 @@ import { Hospital, Language, departments } from '@/types';
 import { MapPin, Phone, Clock, AlertTriangle, ArrowLeft, CheckCircle, CreditCard, Shield, Sparkles, MessageSquare, Navigation, ExternalLink, Wallet, LocateFixed, Info } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { Suspense } from 'react';
+import { useGeolocation, distanceKm, formatDistance, DISTANCE_OPTIONS, SHINJUKU_CENTER, AREA_PRESETS } from '@/lib/geo';
 
 // 描画する検索結果の上限。全件(最大4,430)をDOMに出すと重いため上位のみ描画する。
 // 近い順ソート時は「最寄り上位」、非ソート時は「先頭」の N 件になる。
 const RESULT_CAP = 100;
-import { useGeolocation, distanceKm, formatDistance, DISTANCE_OPTIONS, SHINJUKU_CENTER, AREA_PRESETS } from '@/lib/geo';
 
 function HospitalsContent() {
   const { language, t } = useLanguage();
@@ -78,9 +78,14 @@ function HospitalsContent() {
   const usingRealLocation = !!geo.coords;
 
   // 位置取得に成功したら、既定で「近い順」に並べ替える（要件: 取得成功時に距離順ソート）。
-  useEffect(() => {
-    if (geo.status === 'granted') setActiveRadius(r => (r === 'off' ? null : r));
-  }, [geo.status]);
+  // effect 内 setState（cascading render）を避け、React 推奨の「前回値比較でレンダー時に更新」で実装。
+  const [grantHandled, setGrantHandled] = useState(false);
+  if (geo.status === 'granted' && !grantHandled) {
+    setGrantHandled(true);
+    if (activeRadius === 'off') setActiveRadius(null);
+  } else if (geo.status !== 'granted' && grantHandled) {
+    setGrantHandled(false);
+  }
 
   // フォールバックのエリアを選んだときも近い順にする。位置情報は端末内のみで使用（サーバー送信なし）。
   const selectArea = (a: { name: string; lat: number; lng: number }) => {
