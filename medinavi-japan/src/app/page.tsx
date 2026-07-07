@@ -8,8 +8,11 @@ import { useRouter } from 'next/navigation';
 import {
   AlertCircle, Search, Clock, Stethoscope, Languages,
   Shield, CreditCard, CheckCircle, ArrowRight, ChevronRight,
-  MapPin, Zap,
+  MapPin, Zap, ExternalLink, MessageCircle,
 } from 'lucide-react';
+
+// オンライン診療（有料・外部サービス Nurse Guide Japan）への遷移先。
+const ONLINE_CONSULT_URL = 'https://ghjapan2025.github.io/nurse-guide-japan/';
 
 const DEPT_ICONS: Record<string, string> = {
   internal:      '🩺',
@@ -383,6 +386,26 @@ export default function Home() {
           </div>
         </div>
       </div>
+
+      {/* ── オンライン診療（有料・外部サービス）── */}
+      <a
+        href={ONLINE_CONSULT_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="group flex items-center gap-4 bg-white border border-brand-200 rounded-3xl p-5 sm:p-6 shadow-md hover:shadow-lg hover:border-brand-300 active:scale-[0.99] transition-all"
+      >
+        <div className="bg-gradient-to-tr from-brand-600 to-indigo-500 p-3 rounded-2xl text-white shadow-md shadow-indigo-100 flex-shrink-0">
+          <MessageCircle className="w-6 h-6" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 flex-wrap">
+            <h3 className="text-base font-extrabold text-slate-900">{t('nav.online')}</h3>
+            <span className="text-[10px] font-bold text-amber-600 bg-amber-50 border border-amber-200 rounded px-1.5 py-0.5 leading-none">{t('common.paid')}</span>
+          </div>
+          <p className="text-xs text-slate-500 font-semibold leading-relaxed mt-1">{t('online.desc')}</p>
+        </div>
+        <ExternalLink className="w-5 h-5 text-brand-400 group-hover:text-brand-600 flex-shrink-0 transition-colors" />
+      </a>
 
       {/* ── 4. CORE ADVANTAGE ── */}
       <div className="space-y-5">

@@ -49,6 +49,9 @@ const translations = {
     'nav.hospitals': '医療機関一覧',
     'nav.emergency': '緊急時ガイド',
     'nav.symptoms': '症状から探す',
+    'nav.online': 'オンライン診療',
+    'common.paid': '有料',
+    'online.desc': '看護師がチャットで症状相談・病院案内・遠隔診療予約をサポート（外部サービス）',
 
     // 距離検索
     'distance.title': '距離で絞り込む',
@@ -167,6 +170,9 @@ const translations = {
     'nav.hospitals': 'Hospitals',
     'nav.emergency': 'Emergency Guide',
     'nav.symptoms': 'By Symptom',
+    'nav.online': 'Online Consultation',
+    'common.paid': 'Paid',
+    'online.desc': 'Licensed nurses assist by chat: symptom advice, hospital navigation, telemedicine booking (external service).',
 
     // Distance search
     'distance.title': 'Filter by Distance',
@@ -285,6 +291,9 @@ const translations = {
     'nav.hospitals': '医院列表',
     'nav.emergency': '紧急指南',
     'nav.symptoms': '按症状查找',
+    'nav.online': '在线诊疗',
+    'common.paid': '收费',
+    'online.desc': '护士通过聊天协助症状咨询、就医引导、远程诊疗预约（外部服务）。',
 
     // 距离检索
     'distance.title': '按距离筛选',
@@ -403,6 +412,9 @@ const translations = {
     'nav.hospitals': '병원 목록',
     'nav.emergency': '응급 가이드',
     'nav.symptoms': '증상으로 찾기',
+    'nav.online': '온라인 진료',
+    'common.paid': '유료',
+    'online.desc': '간호사가 채팅으로 증상 상담·병원 안내·원격진료 예약을 지원합니다(외부 서비스).',
 
     // 거리 검색
     'distance.title': '거리로 필터링',
@@ -521,6 +533,9 @@ const translations = {
     'nav.hospitals': 'Hospitales',
     'nav.emergency': 'Guía de Emergencia',
     'nav.symptoms': 'Por Síntoma',
+    'nav.online': 'Consulta en línea',
+    'common.paid': 'De pago',
+    'online.desc': 'Enfermeras te asisten por chat: consulta de síntomas, guía hospitalaria y reserva de telemedicina (servicio externo).',
 
     // Búsqueda por distancia
     'distance.title': 'Filtrar por distancia',

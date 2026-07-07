@@ -3,7 +3,10 @@
 import Link from 'next/link';
 import { useLanguage } from '@/components/LanguageProvider';
 import { Language } from '@/types';
-import { Globe, HeartPulse } from 'lucide-react';
+import { Globe, HeartPulse, ExternalLink } from 'lucide-react';
+
+// オンライン診療（有料・外部サービス Nurse Guide Japan）への遷移先。
+const ONLINE_CONSULT_URL = 'https://ghjapan2025.github.io/nurse-guide-japan/';
 
 export function Header() {
   const { language, setLanguage, t } = useLanguage();
@@ -33,6 +36,16 @@ export function Header() {
                 <span className="inline-block w-2 h-2 rounded-full bg-emergency-500 animate-pulse"></span>
                 {t('nav.emergency')}
               </Link>
+              <a
+                href={ONLINE_CONSULT_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm font-semibold text-brand-600 hover:text-brand-700 transition-colors flex items-center gap-1.5"
+              >
+                {t('nav.online')}
+                <span className="text-[10px] font-bold text-amber-600 bg-amber-50 border border-amber-200 rounded px-1 py-0.5 leading-none">{t('common.paid')}</span>
+                <ExternalLink className="w-3.5 h-3.5" />
+              </a>
             </nav>
             
             <div className="relative flex items-center gap-2 border border-slate-200/60 rounded-xl px-3 py-1.5 bg-white/60 shadow-xs focus-within:ring-2 focus-within:ring-brand-500/20 focus-within:border-brand-500 transition-all">
