@@ -100,6 +100,9 @@ const translations = {
     'btn.openMap': '地図で開く',
     'btn.needCareNow': '今すぐ受診したい',
     'btn.findNearby': '近くの病院を探す',
+    'btn.locating': '現在地を取得中…',
+    'symptom.suggestedDept': '目安の診療科',
+    'filter.clearAll': 'すべて解除',
 
     // 地図
     'map.show': '地図を表示',
@@ -219,6 +222,9 @@ const translations = {
     'btn.openMap': 'Open in Maps',
     'btn.needCareNow': 'I need care now',
     'btn.findNearby': 'Find clinics near me',
+    'btn.locating': 'Locating…',
+    'symptom.suggestedDept': 'Suggested department',
+    'filter.clearAll': 'Clear all',
 
     // Map
     'map.show': 'Show map',
@@ -338,6 +344,9 @@ const translations = {
     'btn.openMap': '在地图中打开',
     'btn.needCareNow': '我现在需要就诊',
     'btn.findNearby': '查找附近的诊所',
+    'btn.locating': '正在获取位置…',
+    'symptom.suggestedDept': '建议就诊科室',
+    'filter.clearAll': '全部清除',
 
     // 地图
     'map.show': '显示地图',
@@ -457,6 +466,9 @@ const translations = {
     'btn.openMap': '지도에서 열기',
     'btn.needCareNow': '지금 진료가 필요해요',
     'btn.findNearby': '가까운 병원 찾기',
+    'btn.locating': '위치 확인 중…',
+    'symptom.suggestedDept': '권장 진료과',
+    'filter.clearAll': '모두 해제',
 
     // 지도
     'map.show': '지도 표시',
@@ -576,6 +588,9 @@ const translations = {
     'btn.openMap': 'Abrir en Maps',
     'btn.needCareNow': 'Necesito atención ahora',
     'btn.findNearby': 'Buscar clínicas cercanas',
+    'btn.locating': 'Ubicando…',
+    'symptom.suggestedDept': 'Especialidad sugerida',
+    'filter.clearAll': 'Borrar todo',
 
     // Mapa
     'map.show': 'Mostrar mapa',

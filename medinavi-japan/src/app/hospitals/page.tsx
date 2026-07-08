@@ -1,10 +1,10 @@
 "use client";
 
 import { useLanguage } from '@/components/LanguageProvider';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Hospital, Language, departments } from '@/types';
-import { MapPin, Phone, Clock, AlertTriangle, ArrowLeft, CheckCircle, CreditCard, Shield, Sparkles, MessageSquare, Navigation, ExternalLink, Wallet, LocateFixed, Info } from 'lucide-react';
+import { MapPin, Phone, Clock, AlertTriangle, ArrowLeft, CheckCircle, CreditCard, Shield, Sparkles, MessageSquare, Navigation, ExternalLink, Wallet, LocateFixed, Info, X } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { Suspense } from 'react';
 import { useGeolocation, distanceKm, formatDistance, DISTANCE_OPTIONS, SHINJUKU_CENTER, AREA_PRESETS } from '@/lib/geo';
@@ -16,8 +16,11 @@ const RESULT_CAP = 100;
 function HospitalsContent() {
   const { language, t } = useLanguage();
   const searchParams = useSearchParams();
+  const router = useRouter();
   const [hospitals, setHospitals] = useState<Hospital[]>([]);
   const [loading, setLoading] = useState(true);
+  // ホームの「近くの病院を探す」で取得した座標（sessionStorage 経由・端末内のみ・一度きり）。
+  const [seededCoords, setSeededCoords] = useState<{ lat: number; lng: number } | null>(null);
 
   useEffect(() => {
     fetch('/data/clinics.json')
@@ -46,6 +49,11 @@ function HospitalsContent() {
         });
         setHospitals(updated);
         setLoading(false);
+        // ホームからの現在地の受け渡しを取り込む（非同期コールバック内で初期化タイミングも安全）。
+        try {
+          const raw = sessionStorage.getItem('mn_nearCoords');
+          if (raw) { setSeededCoords(JSON.parse(raw)); sessionStorage.removeItem('mn_nearCoords'); }
+        } catch { /* 取得不可でも新宿中心で動作 */ }
       })
       .catch(() => setLoading(false));
   }, []);
@@ -73,9 +81,12 @@ function HospitalsContent() {
   // フォールバック: 位置情報が使えない場合にユーザーが選ぶエリア/駅（任意）。
   const [manualPoint, setManualPoint] = useState<{ name: string; lat: number; lng: number } | null>(null);
 
+  // 実際の現在地（一覧のボタン取得 or ホームからの受け渡し）。
+  const realCoords = geo.coords ?? seededCoords;
+
   // 基準点の優先順位: 実際の現在地 → 手動選択エリア → 新宿中心（既定の目安）。
-  const refPoint = geo.coords ?? (manualPoint ? { lat: manualPoint.lat, lng: manualPoint.lng } : SHINJUKU_CENTER);
-  const usingRealLocation = !!geo.coords;
+  const refPoint = realCoords ?? (manualPoint ? { lat: manualPoint.lat, lng: manualPoint.lng } : SHINJUKU_CENTER);
+  const usingRealLocation = !!realCoords;
 
   // 位置取得に成功したら、既定で「近い順」に並べ替える（要件: 取得成功時に距離順ソート）。
   // effect 内 setState（cascading render）を避け、React 推奨の「前回値比較でレンダー時に更新」で実装。
@@ -146,6 +157,27 @@ function HospitalsContent() {
     }).join(', ');
   };
 
+  // D: 適用中フィルタのチップ表示。× で該当パラメータを URL から除去（distance は専用UIのため対象外）。
+  const langName = (code: string) =>
+    code === 'en' ? 'English' : code === 'zh' ? '中文' : code === 'ko' ? '한국어' : code === 'es' ? 'Español' : '日本語';
+  const removeFilter = (key: string) => {
+    const p = new URLSearchParams(Array.from(searchParams.entries()));
+    p.delete(key);
+    const qs = p.toString();
+    router.replace(qs ? `/hospitals?${qs}` : '/hospitals');
+  };
+  const activeFilters: Array<{ key: string; label: string }> = [];
+  if (deptFilter)        activeFilters.push({ key: 'dept',         label: getDeptNames([deptFilter]) });
+  if (langFilter)        activeFilters.push({ key: 'lang',         label: langName(langFilter) });
+  if (openNowFilter)     activeFilters.push({ key: 'open',         label: t('filter.openNow') });
+  if (engTodayFilter)    activeFilters.push({ key: 'engtoday',     label: t('filter.englishToday') });
+  if (cardFilter)        activeFilters.push({ key: 'card',         label: t('filter.creditCard') });
+  if (insuranceFilter)   activeFilters.push({ key: 'insurance',    label: t('filter.insurance') });
+  if (nightWeekendFilter) activeFilters.push({ key: 'nightweekend', label: t('filter.nightWeekend') });
+  if (walkInFilter)      activeFilters.push({ key: 'walkin',       label: t('filter.walkIn') });
+  if (verifiedFilter)    activeFilters.push({ key: 'verified',     label: t('filter.verified') });
+  if (selfPayFilter)     activeFilters.push({ key: 'selfpay',      label: t('filter.selfPay') });
+
   const getVerificationMethodLabel = (method?: string) => {
     switch(method) {
       case 'phone': return 'Direct Phone Call';
@@ -198,6 +230,28 @@ function HospitalsContent() {
               </p>
             )}
           </div>
+
+          {/* ── D: 適用中フィルタのチップ（× で解除・全解除可能） ── */}
+          {activeFilters.length > 0 && (
+            <div className="flex flex-wrap items-center gap-2">
+              {activeFilters.map(f => (
+                <button
+                  key={f.key}
+                  onClick={() => removeFilter(f.key)}
+                  className="inline-flex items-center gap-1.5 pl-2.5 pr-1.5 py-1 rounded-full text-xs font-bold bg-brand-50 border border-brand-200 text-brand-700 hover:bg-brand-100 transition-colors"
+                >
+                  {f.label}
+                  <X className="w-3.5 h-3.5 text-brand-400" />
+                </button>
+              ))}
+              <button
+                onClick={() => router.replace('/hospitals')}
+                className="text-xs font-bold text-slate-400 hover:text-slate-600 underline underline-offset-2 px-1"
+              >
+                {t('filter.clearAll')}
+              </button>
+            </div>
+          )}
 
           {/* ── 距離フィルタ（要件2）: 位置情報は任意。未許可でも新宿中心からの目安で動作 ── */}
           <div className="bg-white border border-slate-200/80 rounded-2xl p-3 space-y-2.5 shadow-xs">

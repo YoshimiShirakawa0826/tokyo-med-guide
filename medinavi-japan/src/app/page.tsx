@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 import {
   AlertCircle, Search, Clock, Stethoscope, Languages,
   Shield, CreditCard, CheckCircle, ArrowRight, ChevronRight,
-  MapPin, Zap, ExternalLink, MessageCircle,
+  MapPin, Zap, ExternalLink, MessageCircle, Info,
 } from 'lucide-react';
 
 // オンライン診療（有料・外部サービス Nurse Guide Japan）への遷移先。
@@ -56,6 +56,7 @@ export default function Home() {
   const [verified,     setVerified]     = useState(false);
   const [selfPay,      setSelfPay]      = useState(false);
   const [showMore,     setShowMore]     = useState(false);
+  const [locating,     setLocating]     = useState(false);
 
   const handleSearch = () => {
     const p = new URLSearchParams();
@@ -74,6 +75,27 @@ export default function Home() {
 
   const quickSearch = (params: Record<string, string>) =>
     router.push(`/hospitals?${new URLSearchParams(params)}`);
+
+  // 「近くの病院を探す」: ここで位置情報を取得してから一覧へ遷移する（タップ=ジェスチャを保持し
+  // iOS Safari でも許可ダイアログが確実に出る）。取得座標は sessionStorage で端末内のみ受け渡し、
+  // URL やサーバーには載せない。拒否・非対応・失敗時はそのまま遷移し、一覧側のエリア選択で代替する。
+  const findNearby = () => {
+    if (typeof navigator === 'undefined' || !('geolocation' in navigator)) {
+      quickSearch({ dist: 'near' });
+      return;
+    }
+    setLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        try {
+          sessionStorage.setItem('mn_nearCoords', JSON.stringify({ lat: pos.coords.latitude, lng: pos.coords.longitude }));
+        } catch { /* storage 不可でも遷移は継続 */ }
+        quickSearch({ dist: 'near' });
+      },
+      () => { setLocating(false); quickSearch({ dist: 'near' }); },
+      { enableHighAccuracy: false, timeout: 10000, maximumAge: 60000 }
+    );
+  };
 
   const toggleDept = (id: string)   => setSelectedDept(v => v === id   ? '' : id);
   const toggleLang = (code: string) => setSelectedLang(v => v === code ? '' : code);
@@ -126,13 +148,20 @@ export default function Home() {
               <span className="text-base font-extrabold text-left leading-tight">{t('btn.needCareNow')}</span>
             </button>
             <button
-              onClick={() => quickSearch({ dist: 'near' })}
-              className="flex items-center gap-3 bg-gradient-to-r from-brand-600 to-indigo-600 text-white rounded-2xl px-5 py-4 shadow-lg hover:scale-[1.01] active:scale-95 transition-all"
+              onClick={findNearby}
+              disabled={locating}
+              className="flex items-center gap-3 bg-gradient-to-r from-brand-600 to-indigo-600 text-white rounded-2xl px-5 py-4 shadow-lg hover:scale-[1.01] active:scale-95 transition-all disabled:opacity-70 disabled:cursor-wait"
             >
-              <MapPin className="w-6 h-6 flex-shrink-0" />
-              <span className="text-base font-extrabold text-left leading-tight">{t('btn.findNearby')}</span>
+              <MapPin className={`w-6 h-6 flex-shrink-0 ${locating ? 'animate-pulse' : ''}`} />
+              <span className="text-base font-extrabold text-left leading-tight">{locating ? t('btn.locating') : t('btn.findNearby')}</span>
             </button>
           </div>
+
+          {/* 位置情報の事前説明（許可を求める前に常時表示。端末内のみ・サーバー送信なし） */}
+          <p className="flex items-start gap-1.5 text-[11px] text-slate-400 font-semibold leading-relaxed -mt-4">
+            <Info className="w-3.5 h-3.5 flex-shrink-0 mt-0.5 text-brand-400" />
+            {t('distance.consent')}
+          </p>
 
           {/* 症状から探す（診断ではなく科の案内, 要件4） */}
           <Link
