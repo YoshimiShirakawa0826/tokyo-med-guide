@@ -96,7 +96,7 @@ export default function Home() {
           </span>
         </div>
         <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-slate-900 leading-tight">
-          Tokyo <span className="bg-gradient-to-r from-brand-600 to-indigo-500 bg-clip-text text-transparent">Med Finder</span>
+          MediNavi <span className="bg-gradient-to-r from-brand-600 to-indigo-500 bg-clip-text text-transparent">JAPAN</span>
         </h1>
         <p className="text-base text-slate-500 font-semibold">
           {t('home.subtitle')}
@@ -155,7 +155,6 @@ export default function Home() {
               <Clock className="w-5 h-5 text-accent-600 flex-shrink-0" />
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-extrabold text-accent-700 leading-tight">{t('home.quickOpen')}</p>
-                <p className="text-xs text-accent-500 font-semibold mt-0.5">Open Now</p>
               </div>
               <ChevronRight className="w-4 h-4 text-accent-300 flex-shrink-0 group-hover:translate-x-0.5 transition-transform" />
             </button>
@@ -167,7 +166,6 @@ export default function Home() {
               <Languages className="w-5 h-5 text-brand-600 flex-shrink-0" />
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-extrabold text-brand-700 leading-tight">{t('home.quickEngOpen')}</p>
-                <p className="text-xs text-brand-400 font-semibold mt-0.5">English · Open Now</p>
               </div>
               <ChevronRight className="w-4 h-4 text-brand-300 flex-shrink-0 group-hover:translate-x-0.5 transition-transform" />
             </button>
