@@ -378,19 +378,30 @@ function HospitalsContent() {
                       {hospital.supportedLanguages.includes('es') && (
                         <span className="bg-slate-100 text-slate-700 text-[10px] px-2.5 py-1 rounded-lg font-bold border border-slate-200">ES</span>
                       )}
+                      {/* 優先順位順: 言語 → 今開いている → 予約不要 → カード → 自費 → 海外保険 → 週末(優先外は末尾) */}
                       {hospital.isOpenNow && (
                         <span className="bg-accent-50 text-accent-700 text-[10px] px-2.5 py-1 rounded-lg font-bold border border-accent-100">Open Today</span>
                       )}
                       {hospital.walkInAllowed && (
                         <span className="bg-slate-100 text-slate-700 text-[10px] px-2.5 py-1 rounded-lg font-bold border border-slate-200">Walk-in</span>
                       )}
-                      {hospital.accessInfo?.weekendOpen && (
-                        <span className="bg-slate-100 text-slate-700 text-[10px] px-2.5 py-1 rounded-lg font-bold border border-slate-200">Weekend</span>
+                      {hospital.accessInfo?.creditCardAccepted && (
+                        <span className="bg-slate-100 text-slate-700 text-[10px] px-2.5 py-1 rounded-lg font-bold border border-slate-200 flex items-center gap-1">
+                          <CreditCard className="w-3 h-3" /> Card
+                        </span>
                       )}
                       {hospital.accessInfo?.selfPayAvailable && (
                         <span className="bg-amber-50 text-amber-700 text-[10px] px-2.5 py-1 rounded-lg font-bold border border-amber-200 flex items-center gap-1">
                           <Wallet className="w-3 h-3" /> {t('filter.selfPay')}
                         </span>
+                      )}
+                      {hospital.accessInfo?.overseasInsuranceAccepted && (
+                        <span className="bg-slate-100 text-slate-700 text-[10px] px-2.5 py-1 rounded-lg font-bold border border-slate-200 flex items-center gap-1">
+                          <Shield className="w-3 h-3" /> Insurance
+                        </span>
+                      )}
+                      {hospital.accessInfo?.weekendOpen && (
+                        <span className="bg-slate-100 text-slate-700 text-[10px] px-2.5 py-1 rounded-lg font-bold border border-slate-200">Weekend</span>
                       )}
                     </div>
                   </Link>
