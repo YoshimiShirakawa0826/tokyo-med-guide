@@ -146,31 +146,6 @@ export default function Home() {
             <ChevronRight className="w-4 h-4 text-slate-300" />
           </Link>
 
-          {/* ── 1タップ クイック検索 ── */}
-          <div className="grid grid-cols-2 gap-3">
-            <button
-              onClick={() => quickSearch({ open: 'true' })}
-              className="group flex items-center gap-2.5 bg-accent-50 border border-accent-200 rounded-2xl px-4 py-3.5 hover:bg-accent-100 active:scale-95 transition-all text-left"
-            >
-              <Clock className="w-5 h-5 text-accent-600 flex-shrink-0" />
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-extrabold text-accent-700 leading-tight">{t('home.quickOpen')}</p>
-              </div>
-              <ChevronRight className="w-4 h-4 text-accent-300 flex-shrink-0 group-hover:translate-x-0.5 transition-transform" />
-            </button>
-
-            <button
-              onClick={() => quickSearch({ lang: 'en', open: 'true' })}
-              className="group flex items-center gap-2.5 bg-brand-50 border border-brand-200 rounded-2xl px-4 py-3.5 hover:bg-brand-100 active:scale-95 transition-all text-left"
-            >
-              <Languages className="w-5 h-5 text-brand-600 flex-shrink-0" />
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-extrabold text-brand-700 leading-tight">{t('home.quickEngOpen')}</p>
-              </div>
-              <ChevronRight className="w-4 h-4 text-brand-300 flex-shrink-0 group-hover:translate-x-0.5 transition-transform" />
-            </button>
-          </div>
-
           {/* divider */}
           <div className="flex items-center gap-3">
             <div className="flex-1 border-t border-slate-100" />
