@@ -17,7 +17,25 @@ export type Coords = { lat: number; lng: number };
 // これはあくまで参考表示用で、ユーザーの実際の現在地ではない旨を UI 側で明示する。
 export const SHINJUKU_CENTER: Coords = { lat: 35.6938, lng: 139.7036 };
 
-export type GeoStatus = "idle" | "prompting" | "granted" | "denied" | "unsupported" | "error";
+export type GeoFailureStatus = "denied" | "unavailable" | "timeout" | "unsupported" | "error";
+export type GeoStatus = "idle" | "prompting" | "granted" | GeoFailureStatus;
+
+export function getGeoFailureStatus(error: GeolocationPositionError): GeoFailureStatus {
+  switch (error.code) {
+    case error.PERMISSION_DENIED:
+      return "denied";
+    case error.POSITION_UNAVAILABLE:
+      return "unavailable";
+    case error.TIMEOUT:
+      return "timeout";
+    default:
+      return "error";
+  }
+}
+
+export function isGeoFailureStatus(status: GeoStatus): status is GeoFailureStatus {
+  return ["denied", "unavailable", "timeout", "unsupported", "error"].includes(status);
+}
 
 export interface GeoState {
   coords: Coords | null;
@@ -47,10 +65,7 @@ export function useGeolocation(): GeoState {
         setCoords({ lat: pos.coords.latitude, lng: pos.coords.longitude });
         setStatus("granted");
       },
-      (err) => {
-        // 1 = PERMISSION_DENIED
-        setStatus(err.code === 1 ? "denied" : "error");
-      },
+      (err) => setStatus(getGeoFailureStatus(err)),
       { enableHighAccuracy: false, timeout: 10000, maximumAge: 60000 }
     );
   }, []);

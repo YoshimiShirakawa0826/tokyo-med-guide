@@ -2,6 +2,7 @@
 
 import { useLanguage } from '@/components/LanguageProvider';
 import { departments } from '@/types';
+import { getGeoFailureStatus, isGeoFailureStatus, type GeoStatus } from '@/lib/geo';
 import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -56,7 +57,8 @@ export default function Home() {
   const [verified,     setVerified]     = useState(false);
   const [selfPay,      setSelfPay]      = useState(false);
   const [showMore,     setShowMore]     = useState(false);
-  const [locating,     setLocating]     = useState(false);
+  const [locationStatus, setLocationStatus] = useState<GeoStatus>('idle');
+  const locating = locationStatus === 'prompting';
 
   const handleSearch = () => {
     const p = new URLSearchParams();
@@ -78,21 +80,25 @@ export default function Home() {
 
   // 「近くの病院を探す」: ここで位置情報を取得してから一覧へ遷移する（タップ=ジェスチャを保持し
   // iOS Safari でも許可ダイアログが確実に出る）。取得座標は sessionStorage で端末内のみ受け渡し、
-  // URL やサーバーには載せない。拒否・非対応・失敗時はそのまま遷移し、一覧側のエリア選択で代替する。
+  // URL やサーバーには載せない。拒否・非対応・失敗時は理由と代替手段をこの画面で明示する。
   const findNearby = () => {
     if (typeof navigator === 'undefined' || !('geolocation' in navigator)) {
-      quickSearch({ dist: 'near' });
+      setLocationStatus('unsupported');
       return;
     }
-    setLocating(true);
+    setLocationStatus('prompting');
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         try {
           sessionStorage.setItem('mn_nearCoords', JSON.stringify({ lat: pos.coords.latitude, lng: pos.coords.longitude }));
-        } catch { /* storage 不可でも遷移は継続 */ }
+        } catch {
+          setLocationStatus('error');
+          return;
+        }
+        setLocationStatus('granted');
         quickSearch({ dist: 'near' });
       },
-      () => { setLocating(false); quickSearch({ dist: 'near' }); },
+      (error) => setLocationStatus(getGeoFailureStatus(error)),
       { enableHighAccuracy: false, timeout: 10000, maximumAge: 60000 }
     );
   };
@@ -162,6 +168,37 @@ export default function Home() {
             <Info className="w-3.5 h-3.5 flex-shrink-0 mt-0.5 text-brand-400" />
             {t('distance.consent')}
           </p>
+
+          {isGeoFailureStatus(locationStatus) && (
+            <div role="alert" className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-amber-950">
+              <div className="flex items-start gap-3">
+                <AlertCircle className="mt-0.5 h-5 w-5 flex-shrink-0 text-amber-600" />
+                <div className="min-w-0 flex-1 space-y-3">
+                  <div>
+                    <p className="text-sm font-extrabold">{t('location.errorTitle')}</p>
+                    <p className="mt-1 text-xs font-semibold leading-relaxed text-amber-800">
+                      {t(`location.${locationStatus}`)}
+                    </p>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      onClick={findNearby}
+                      className="rounded-xl bg-amber-600 px-3 py-2 text-xs font-bold text-white transition-colors hover:bg-amber-700 active:scale-95"
+                    >
+                      {t('location.retry')}
+                    </button>
+                    <Link
+                      href="/hospitals?location=manual"
+                      className="rounded-xl border border-amber-300 bg-white px-3 py-2 text-xs font-bold text-amber-900 transition-colors hover:bg-amber-100 active:scale-95"
+                    >
+                      {t('location.chooseArea')}
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* 症状から探す（診断ではなく科の案内, 要件4） */}
           <Link

@@ -7,7 +7,10 @@ import { Hospital, Language, departments } from '@/types';
 import { MapPin, Phone, Clock, AlertTriangle, ArrowLeft, CheckCircle, CreditCard, Shield, Sparkles, MessageSquare, Navigation, ExternalLink, Wallet, LocateFixed, Info, X } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { Suspense } from 'react';
-import { useGeolocation, distanceKm, formatDistance, DISTANCE_OPTIONS, SHINJUKU_CENTER, AREA_PRESETS } from '@/lib/geo';
+import {
+  useGeolocation, distanceKm, formatDistance, DISTANCE_OPTIONS, SHINJUKU_CENTER, AREA_PRESETS,
+  isGeoFailureStatus, type GeoStatus,
+} from '@/lib/geo';
 
 // 描画する検索結果の上限。全件(最大4,430)をDOMに出すと重いため上位のみ描画する。
 // 近い順ソート時は「最寄り上位」、非ソート時は「先頭」の N 件になる。
@@ -21,6 +24,12 @@ function HospitalsContent() {
   const [loading, setLoading] = useState(true);
   // ホームの「近くの病院を探す」で取得した座標（sessionStorage 経由・端末内のみ・一度きり）。
   const [seededCoords, setSeededCoords] = useState<{ lat: number; lng: number } | null>(null);
+  const distParam = searchParams.get('dist'); // '1'|'3'|'5'|'10'|'near'
+  const manualLocationRequested = searchParams.get('location') === 'manual';
+  // 現在地の受け渡しを確認できるまでは「近い順」にしない。固定座標への誤フォールバックを防ぐ。
+  const [activeRadius, setActiveRadius] = useState<number | null | 'off'>(
+    distParam && distParam !== 'near' ? Number(distParam) : 'off'
+  );
 
   useEffect(() => {
     fetch('/data/clinics.json')
@@ -52,8 +61,16 @@ function HospitalsContent() {
         // ホームからの現在地の受け渡しを取り込む（非同期コールバック内で初期化タイミングも安全）。
         try {
           const raw = sessionStorage.getItem('mn_nearCoords');
-          if (raw) { setSeededCoords(JSON.parse(raw)); sessionStorage.removeItem('mn_nearCoords'); }
-        } catch { /* 取得不可でも新宿中心で動作 */ }
+          if (raw) {
+            const parsed = JSON.parse(raw) as { lat?: unknown; lng?: unknown };
+            if (typeof parsed.lat === 'number' && Number.isFinite(parsed.lat)
+              && typeof parsed.lng === 'number' && Number.isFinite(parsed.lng)) {
+              setSeededCoords({ lat: parsed.lat, lng: parsed.lng });
+              setActiveRadius(null);
+            }
+            sessionStorage.removeItem('mn_nearCoords');
+          }
+        } catch { /* 取得不可時は距離ソートを有効にしない */ }
       })
       .catch(() => setLoading(false));
   }, []);
@@ -72,11 +89,6 @@ function HospitalsContent() {
 
   // 距離フィルタ（要件2）。位置情報は任意。未許可でも新宿中心からの目安で動作する。
   const geo = useGeolocation();
-  const distParam = searchParams.get('dist'); // '1'|'3'|'5'|'10'|'near'
-  // 'off' = 距離ソートなし（既存の中立順を維持 = 広告非依存, 要件7） / null = 近い順 / number = X km 以内
-  const [activeRadius, setActiveRadius] = useState<number | null | 'off'>(
-    distParam ? (distParam === 'near' ? null : Number(distParam)) : 'off'
-  );
 
   // フォールバック: 位置情報が使えない場合にユーザーが選ぶエリア/駅（任意）。
   const [manualPoint, setManualPoint] = useState<{ name: string; lat: number; lng: number } | null>(null);
@@ -90,13 +102,21 @@ function HospitalsContent() {
 
   // 位置取得に成功したら、既定で「近い順」に並べ替える（要件: 取得成功時に距離順ソート）。
   // effect 内 setState（cascading render）を避け、React 推奨の「前回値比較でレンダー時に更新」で実装。
-  const [grantHandled, setGrantHandled] = useState(false);
-  if (geo.status === 'granted' && !grantHandled) {
-    setGrantHandled(true);
-    if (activeRadius === 'off') setActiveRadius(null);
-  } else if (geo.status !== 'granted' && grantHandled) {
-    setGrantHandled(false);
+  const [handledGeoStatus, setHandledGeoStatus] = useState<GeoStatus>('idle');
+  if (geo.status !== handledGeoStatus) {
+    setHandledGeoStatus(geo.status);
+    if (geo.status === 'granted' && activeRadius === 'off') {
+      setActiveRadius(null);
+    } else if (isGeoFailureStatus(geo.status) && !manualPoint && !seededCoords) {
+      setActiveRadius('off');
+    }
   }
+
+  const showAreaChoices = !usingRealLocation && (
+    manualLocationRequested || distParam === 'near' || isGeoFailureStatus(geo.status)
+  );
+  const needsAreaSelection = showAreaChoices && !manualPoint;
+  const showDistance = !needsAreaSelection;
 
   // フォールバックのエリアを選んだときも近い順にする。位置情報は端末内のみで使用（サーバー送信なし）。
   const selectArea = (a: { name: string; lat: number; lng: number }) => {
@@ -265,11 +285,13 @@ function HospitalsContent() {
             <div className="flex flex-wrap items-center gap-2">
               <button
                 onClick={() => geo.request()}
+                disabled={geo.status === 'prompting'}
                 className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border transition-all active:scale-95 ${
                   usingRealLocation ? 'bg-accent-50 border-accent-300 text-accent-700' : 'bg-brand-50 border-brand-200 text-brand-700 hover:bg-brand-100'
-                }`}
+                } disabled:cursor-wait disabled:opacity-70`}
               >
-                <LocateFixed className="w-3.5 h-3.5" /> {t('distance.useLocation')}
+                <LocateFixed className={`w-3.5 h-3.5 ${geo.status === 'prompting' ? 'animate-pulse' : ''}`} />
+                {geo.status === 'prompting' ? t('btn.locating') : t('distance.useLocation')}
               </button>
               {DISTANCE_OPTIONS.map(opt => {
                 const selected = activeRadius !== 'off' && activeRadius === opt.value;
@@ -277,9 +299,10 @@ function HospitalsContent() {
                   <button
                     key={String(opt.value)}
                     onClick={() => setActiveRadius(sel => (sel === opt.value ? 'off' : opt.value))}
+                    disabled={needsAreaSelection}
                     className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition-all active:scale-95 ${
                       selected ? 'bg-brand-600 border-brand-600 text-white shadow-sm' : 'bg-white border-slate-200 text-slate-600 hover:border-slate-300'
-                    }`}
+                    } disabled:cursor-not-allowed disabled:opacity-40`}
                   >
                     {t(opt.labelKey)}
                   </button>
@@ -290,13 +313,17 @@ function HospitalsContent() {
             <p className="text-[11px] text-slate-400 font-semibold leading-relaxed">
               {usingRealLocation ? `📍 ${t('distance.useLocation')}`
                 : manualPoint ? `📍 ${manualPoint.name}`
+                : geo.status === 'prompting' ? t('btn.locating')
+                : geo.status === 'timeout' ? t('location.timeout')
+                : geo.status === 'unavailable' ? t('location.unavailable')
                 : geo.status === 'denied' ? t('distance.denied')
                 : geo.status === 'unsupported' ? t('distance.unsupported')
-                : geo.status === 'error' ? t('distance.denied')
+                : geo.status === 'error' ? t('location.error')
+                : needsAreaSelection ? t('distance.chooseArea')
                 : t('distance.approx')}
             </p>
             {/* フォールバック: 取得できない/拒否時にエリア・駅を選んで基準点にする */}
-            {!usingRealLocation && (geo.status === 'denied' || geo.status === 'unsupported' || geo.status === 'error') && (
+            {showAreaChoices && (
               <div className="pt-2 space-y-1.5 border-t border-slate-100">
                 <p className="text-[11px] font-bold text-slate-500">{t('distance.chooseArea')}</p>
                 <div className="flex flex-wrap gap-1.5">
@@ -337,10 +364,12 @@ function HospitalsContent() {
                       </span>
                     )}
 
-                    <span className="inline-flex items-center gap-1 text-[10px] font-extrabold text-brand-600 bg-brand-50 border border-brand-100 px-2 py-0.5 rounded-full">
-                      <Navigation className="w-3 h-3" />
-                      {formatDistance(dist)}{usingRealLocation ? ` ${t('distance.fromMe')}` : '*'}
-                    </span>
+                    {showDistance && (
+                      <span className="inline-flex items-center gap-1 text-[10px] font-extrabold text-brand-600 bg-brand-50 border border-brand-100 px-2 py-0.5 rounded-full">
+                        <Navigation className="w-3 h-3" />
+                        {formatDistance(dist)}{usingRealLocation ? ` ${t('distance.fromMe')}` : '*'}
+                      </span>
+                    )}
                   </div>
 
                   <Link href={`/hospitals/${hospital.id}`} className="block group">
